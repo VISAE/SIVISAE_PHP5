@@ -5104,6 +5104,103 @@ class sivisae_consultas extends Bd {
         return $result;
     }
 
+    // INICIO METODOS INDUCCIÓN
+
+    function consultarMatriculado($documento, $periodo) {
+        $sql = "SELECT 
+                e.`cedula`, e.`nombre`, e.`correo`, e.`telefono`, pro.`descripcion` AS programa, pro.`escuela`, 
+                c.`descripcion` AS cead, z.`descripcion` AS zona, m.`tipo_estudiante`, m.`numero_matriculas`, pa.`descripcion`
+                FROM matricula m INNER JOIN `programa` pro ON m.`programa_programa_id` = pro.`programa_id` 
+                INNER JOIN `estudiante` e ON m.`estudiante_estudiante_id`=e.`estudiante_id`
+                INNER JOIN cead c ON e.`cead_cead_id` = c.`cead_id`
+                INNER JOIN zona z ON c.`zona_zona_id` = z.`zona_id` 
+                INNER JOIN `periodo_academico` pa ON m.`periodo_academico_periodo_academico_id` = pa.`periodo_academico_id`
+                WHERE pa.`estado_estado_id`=1
+                AND e.cedula='".$documento.
+                "' AND m.`periodo_academico_periodo_academico_id`='".$periodo."'";
+        $result = mysql_query($sql);
+        return $result;
+    }
+
+    function consultaEstudiante($documento) {
+        $sql = "SELECT 
+                `estudiante_id`
+                FROM `SIVISAE`.`estudiante` e
+                WHERE e.cedula='$documento'";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    function consultaCentro($centro) {
+        $sql = "SELECT 
+                c.`cead_id`, c.`descripcion`, c.`zona_zona_id` 
+                FROM `sivisae`.`cead` c 
+                WHERE c.`estado_estado_id` = 1
+                AND c.`descripcion` LIKE '%$centro%' ";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    function consultaPrograma($programa) {
+        $sql = "SELECT 
+                p.`programa_id`, p.`descripcion`  
+                FROM `sivisae`.`programa` p 
+                WHERE p.`estado_estado_id` = 1
+                AND p.`descripcion` LIKE '%$programa%' ";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    function consultaPeriodo($periodo) {
+        $sql = "SELECT
+                p.`periodo_academico_id`
+                FROM `sivisae`.`periodo_academico` p
+                WHERE p.`estado_estado_id` = 1
+                AND p.`descripcion` LIKE '%$periodo%' ";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    function consultaMatricula($estudiante, $periodo, $programa) {
+        $sql = "SELECT
+                m.`matricula_id`
+                FROM `sivisae`.`matricula` m
+                WHERE m.`estudiante_estudiante_id` = $estudiante
+                AND m.`periodo_academico_periodo_academico_id` = $periodo
+                AND m.`programa_programa_id` = $programa ";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    function consultaEstrato($estrato) {
+        $sql = "SELECT
+                e.`estrato_id`
+                FROM `sivisae`.`estrato` e
+                WHERE e.`descripcion` LIKE '%$estrato%' ";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    function consultaEtnia($etnia) {
+        $sql = "SELECT
+                e.`etnia_id`
+                FROM `sivisae`.`etnia` e
+                WHERE e.`descripcion` LIKE '%$etnia%' ";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    function consultaDiscapacidad($discapacidad) {
+        $sql = "SELECT
+                e.`discapacidad_id`
+                FROM `sivisae`.`Discapacidad` e
+                WHERE e.`descripcion` LIKE '%$discapacidad%' ";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    // FIN METODOS INDUCCIÓN
+
     // FIN METODO ATENCION
     // 
     // 
