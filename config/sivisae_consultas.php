@@ -581,14 +581,14 @@ class sivisae_consultas extends Bd {
 
     function opciones($usuarioid, $menuid) {
         $sql = "SELECT 
-                    o.descripcion, o.url, o.opcion_id
+                    o.descripcion, o.url, o.opcion_id, o.opcion_padre
                 FROM 
                     usuario_perfil up 
                     INNER JOIN perfil_opcion po ON po.perfil_perfil_id = up.perfil_perfil_id 
                     INNER JOIN opcion o ON o.opcion_id = po.opcion_opcion_id 
                 WHERE 
                     up.usuario_usuario_id = $usuarioid AND o.menu_menu_id = $menuid AND up.estado_estado_id = 1 AND o.estado_estado_id = 1  
-                ORDER BY o.opcion_id ASC ";
+                ORDER BY o.opcion_padre ASC, o.tiene_sub DESC, o.opcion_id ";
         $resultado = mysql_query($sql);
         return $resultado;
     }

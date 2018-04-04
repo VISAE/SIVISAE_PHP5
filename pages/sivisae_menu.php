@@ -80,16 +80,33 @@ if ($_SESSION['perfilid'] !== '2' && $_SESSION['perfilid'] !== '5' && $_SESSION[
             echo "<li class='has-sub' ><a href='$dashboard'><span>$descripcion</span></a>"
             . "<ul>";
             $opciones = $consulta->opciones($usuarioid, $menuid);
+            $subopciones = false;
             while ($row1 = mysql_fetch_array($opciones)) {
                 $opcion = $row1[0];
                 $url = $row1[1];
                 $id_opcion = $row1[2];
+                $id_padre = $row1[3];  // opción_padre
 
-                if ($id_opcion == 22) {
+                if ($id_opcion == 22) { // opción Cambiar Contraseña
                     echo "<li class='last' ><a href='" . RUTA_PPAL . $url . "&op=" . $id_opcion . "'><span >$opcion</span></a></li>";
-                } else {
+                } else if($id_opcion == $id_padre) {   // valida opciones
+                    if($subopciones) { // cierre de previa opción con sub opciones
+                        echo "</ul></li>";
+                        $subopciones = false;
+                    }
+                    if($url == '#') {  // opción con sub opciones
+                        echo "<li class='has-sub' ><a href='" . RUTA_PPAL . $url . "?op=" . $id_opcion . "'><span >$opcion</span></a><ul>";
+                        $subopciones = true;
+                    } else {
+                        echo "<li class='last' ><a href='" . RUTA_PPAL . $url . "?op=" . $id_opcion . "'><span >$opcion</span></a></li>";
+                    }
+                } else {  // valida sub opciones
                     echo "<li class='last' ><a href='" . RUTA_PPAL . $url . "?op=" . $id_opcion . "'><span >$opcion</span></a></li>";
                 }
+            }
+            if($subopciones) { // cierre de opción con sub opciones en caso de ser la ultima opción validada
+                echo "</ul></li>";
+                $subopciones = false;
             }
             echo '</ul></li>';
         }
