@@ -270,6 +270,8 @@ $_SESSION["modulo"] = $_GET["op"];
                 },
                 success: function (response) {
                     $('#spinner').hide();
+                    $('#datosEstudiante').hide();
+                    $("#result").show();
                     $("#result").html(response);
                     $('.cerrar').show();
                     CerrarPopup(2);

@@ -5136,7 +5136,7 @@ class sivisae_consultas extends Bd {
                 c.`cead_id`, c.`descripcion`, c.`zona_zona_id` 
                 FROM `sivisae`.`cead` c 
                 WHERE c.`estado_estado_id` = 1
-                AND c.`descripcion` LIKE '%$centro%' ";
+                AND c.`descripcion` LIKE '%$centro%'";
         $resultado = mysql_query($sql);
         return $resultado;
     }
@@ -5156,7 +5156,7 @@ class sivisae_consultas extends Bd {
                 p.`periodo_academico_id`
                 FROM `sivisae`.`periodo_academico` p
                 WHERE p.`estado_estado_id` = 1
-                AND p.`descripcion` LIKE '%$periodo%' ";
+                AND p.`descripcion` = '$periodo' ";
         $resultado = mysql_query($sql);
         return $resultado;
     }
