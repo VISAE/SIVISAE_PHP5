@@ -5126,7 +5126,7 @@ class sivisae_consultas extends Bd {
         $sql = "SELECT 
                 `estudiante_id`
                 FROM `SIVISAE`.`estudiante` e
-                WHERE e.cedula='$documento'";
+                WHERE e.cedula='".$documento."'";
         $resultado = mysql_query($sql);
         return $resultado;
     }
@@ -5136,7 +5136,7 @@ class sivisae_consultas extends Bd {
                 c.`cead_id`, c.`descripcion`, c.`zona_zona_id` 
                 FROM `sivisae`.`cead` c 
                 WHERE c.`estado_estado_id` = 1
-                AND c.`descripcion` LIKE '%$centro%'";
+                AND c.`descripcion` LIKE '%".$centro."%'";
         $resultado = mysql_query($sql);
         return $resultado;
     }
@@ -5156,7 +5156,7 @@ class sivisae_consultas extends Bd {
                 p.`periodo_academico_id`
                 FROM `sivisae`.`periodo_academico` p
                 WHERE p.`estado_estado_id` = 1
-                AND p.`descripcion` = '$periodo' ";
+                AND p.`descripcion` = '".$periodo."'";
         $resultado = mysql_query($sql);
         return $resultado;
     }
@@ -5165,9 +5165,9 @@ class sivisae_consultas extends Bd {
         $sql = "SELECT
                 m.`matricula_id`
                 FROM `sivisae`.`matricula` m
-                WHERE m.`estudiante_estudiante_id` = $estudiante
-                AND m.`periodo_academico_periodo_academico_id` = $periodo
-                AND m.`programa_programa_id` = $programa ";
+                WHERE m.`estudiante_estudiante_id` = '".$estudiante."'
+                AND m.`periodo_academico_periodo_academico_id` = '".$periodo."'
+                AND m.`programa_programa_id` = '".$programa."'";
         $resultado = mysql_query($sql);
         return $resultado;
     }
@@ -5197,6 +5197,20 @@ class sivisae_consultas extends Bd {
                 WHERE e.`descripcion` LIKE '%$discapacidad%' ";
         $resultado = mysql_query($sql);
         return $resultado;
+    }
+
+    function agregaEstudiante($datos) {
+        $sql = "INSERT INTO `sivisae`.`estudiante` (`cedula`, `nombre`, `correo`, `cead_cead_id`, `skype`, `fecha_nacimiento`, `genero`, `estado_civil`, `telefono`, `usuario`)
+                VALUES ('".$datos['cedula']."', '".$datos['nombre']."', '".$datos['correo']."', '".$datos['cead_cead_id']."', '".$datos['skype']."', '".$datos['fecha_nacimiento']."', '".$datos['genero']."', '".$datos['estado_civil']."', '".$datos['telefono']."', '".$datos['usuario']."')";
+        mysql_query($sql);
+        return mysql_insert_id();
+    }
+
+    function agregaMatricula($datos) {
+        $sql = "INSERT INTO `sivisae`.`matricula` (`estudiante_estudiante_id`, `periodo_academico_periodo_academico_id`, `programa_programa_id`, `tipo_estudiante`, `numero_matriculas`)
+                VALUES ('".$datos['estudiante_estudiante_id']."', '".$datos['periodo_academico_periodo_academico_id']."', '".$datos['programa_programa_id']."', '".$datos['tipo_estudiante']."', '".$datos['numero_matriculas']."')";
+        mysql_query($sql);
+        return mysql_insert_id();
     }
 
     // FIN METODOS INDUCCIÓN

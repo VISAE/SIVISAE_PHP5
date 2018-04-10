@@ -4,7 +4,7 @@ session_start();
 include_once './excel/PHPExcel.php';
 include_once '../config/sivisae_class.php';
 //include_once './crear_reporteCB.php';
-//set_time_limit(300);
+set_time_limit(300);
 if (!isset($_FILES['archivo'])) {
     echo 'Ha habido un error, tiene que elegir un archivo';
 } else {
@@ -41,7 +41,7 @@ if (!isset($_FILES['archivo'])) {
             $hoja = $phpExcel->getActiveSheet()->toArray(true, true, true);
 //            var_dump($hoja);
             $encabezados = '';
-
+            $counter = 0;
             foreach ($hoja as $indice => $fila) {
                 if($indice == 5) { // captura periodo
                     $periodo = $consulta->consultaPeriodo($fila[0]);
@@ -53,40 +53,56 @@ if (!isset($_FILES['archivo'])) {
                 }
                 if($indice == 6) //captura encabezados
                     $encabezados = $fila;
-                /*echo $indice, implode(",",$fila);
-                echo "hola";*/
                 if($indice > 6) { // Inicio informacion estudiantes
                     $estudiante = array_combine($encabezados, $fila);
-                    $centro = trim(preg_replace("/\(.*?\)/", "", $estudiante["Centro"]));
-                    $idCentro = $consulta->consultaCentro(ucwords($centro));
-                    $idCentro = mysql_fetch_array($idCentro)[0];
-                    $idPrograma = $consulta->consultaPrograma($estudiante["Programa"]);
-                    $idPrograma = mysql_fetch_array($idPrograma)[0];
-                    $tipo = ($estudiante["Tipo"] == "NUEVO")?"H":"G";
-                    $genero = ($estudiante["Genero"] == "MASCULINO")?"M":"F";
-                    $usuario = explode("@", $estudiante["Email Institucional"])[0];
+                    if(is_numeric($estudiante["Código"])) {
+                        $centro = trim(preg_replace("/\(.*?\)/", "", $estudiante["Centro"]));
+                        $idCentro = $consulta->consultaCentro(ucwords($centro));
+                        $idCentro = mysql_fetch_array($idCentro)[0];
+                        $idPrograma = $consulta->consultaPrograma($estudiante["Programa"]);
+                        $idPrograma = mysql_fetch_array($idPrograma)[0];
+                        $tipo = ($estudiante["Tipo"] == "NUEVO") ? "H" : "G";
+                        $genero = ($estudiante["Genero"] == "MASCULINO") ? "M" : "F";
+                        $usuario = explode("@", $estudiante["Email Institucional"])[0];
 
-                    $datosEstudiante = $consulta->consultaEstudiante($estudiante["Código"]);
-                    if ($row = mysql_fetch_array($datosEstudiante)) { // si encuentra datos del estudiante
-//                        $estudiantes[] = $estudiante[];
+                        $datosEstudiante = $consulta->consultaEstudiante($estudiante["Código"]);
+                        if (!$row = mysql_fetch_array($datosEstudiante)) { // si NO encuentra datos del estudiante
+                            $datosEstudiante = Array(
+                                'cedula' => $estudiante["Código"],
+                                'nombre' => $estudiante["Nombres"] . ' ' . $estudiante["Apellidos"],
+                                'correo' => $estudiante["Email Personal"],
+                                'cead_cead_id' => $idCentro,
+                                'skype' => 'skype',
+                                'fecha_nacimiento' => '1970-01-01',
+                                'genero' => $genero,
+                                'estado_civil' => 'Soltero(a)',
+                                'telefono' => $estudiante["Telefono"],
+                                'usuario' => $usuario);
+
+                            $idEstudiante = $consulta->agregaEstudiante($datosEstudiante);
+                            $tipoEstudiante = 'G';
+                        } else {
+                            $idEstudiante = $row[0];
+                            $tipoEstudiante = 'H';
+                        }
+
+                        $datosMatricula = $consulta->consultaMatricula($idEstudiante, $periodo, $idPrograma);
+                        if (!$idMatricula = mysql_fetch_array($datosMatricula)) {
+                            $datosMatricula = Array('estudiante_estudiante_id' => $idEstudiante,
+                                'periodo_academico_periodo_academico_id' => $periodo,
+                                'programa_programa_id' => $idPrograma,
+                                'tipo_estudiante' => $tipoEstudiante,
+                                'numero_matriculas' => 1);
+                            $idMatricula = $consulta->agregaMatricula($datosMatricula);
+                            $counter += 1;
+                        }
+//                    $estudiantes[]=Array($row[0], $periodo, $idPrograma, $estado);
                     }
-                    if(is_numeric($estudiante["Código"]))
-                    $estudiantes[] = Array(
-                        'cedula'=>$estudiante["Código"],
-                        'nombre'=>$estudiante["Nombres"].' '.$estudiante["Apellidos"],
-                        'correo'=>$estudiante["Email Personal"],
-                        'cead_cead_id'=>$idCentro,
-                        'skype'=>'skype',
-                        'fecha_nacimiento'=>'1970-01-01',
-                        'genero'=>$genero,
-                        'estado_civil'=>'Soltero(a)',
-                        'telefono'=>$estudiante["Telefono"],
-                        'usuario'=>$usuario);
-                    // SELECT `cedula`,`nombre`,`correo`,`cead_cead_id`,'skype',DATE('1970-01-01'),`genero`, 'Soltero(a)', `telefono`, `usuario` FROM `sivisae`.`estudiante`
                 }
             }
 
-            echo json_encode($estudiantes, JSON_UNESCAPED_UNICODE);
+//            echo json_encode($estudiantes, JSON_UNESCAPED_UNICODE);
+            echo "<strong>".$counter." Registros insertados</strong><br>";
         }
     } else {
         echo 'Archivo inválido <br>';
