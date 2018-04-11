@@ -1,8 +1,11 @@
 <?php
 
-include("./correo/class.phpmailer.php");
-include("./correo/class.smtp.php");
-//include_once("../config/sivisae_class.php");
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'phpmailer/phpmailer/src/Exception.php';
+require 'phpmailer/phpmailer/src/PHPMailer.php';
+require 'phpmailer/phpmailer/src/SMTP.php';
 
 class mail_config extends PHPMailer {
 
@@ -11,14 +14,20 @@ class mail_config extends PHPMailer {
     function __construct() {
         $this->mail = new PHPMailer();
         $this->mail->IsSMTP();
-        $this->mail->SMTPAuth = true;
-        $this->mail->SMTPSecure = "ssl";
+        //Enable SMTP debugging
+        // 0 = off (for production use)
+        // 1 = client messages
+        // 2 = client and server messages
+        // $this->mail->SMTPDebug = 2;
         $this->mail->Host = "smtp.gmail.com";
-        $this->mail->Port = 465;
+        $this->mail->Port = 587;//465;
+        $this->mail->SMTPSecure = "tls";//"ssl";
+        $this->mail->SMTPAuth = true;
         $this->mail->Username = "auditores.servicios@unad.edu.co";
         $this->mail->Password = "SONIA122";
-        $this->mail->From = "no-reply@unad.edu.co";
-        $this->mail->FromName = "Sistema de Informaci".chr(243)."n del Estudiante - SIVISAE - VISAE";
+        $this->mail->CharSet = "UTF-8";
+        //Set who the message is to be sent from
+        $this->mail->setFrom('no-reply@unad.edu.co',  utf8_decode('Sistema de Información del Estudiante - SIVISAE - VISAE'));
     }
 
     function enviarPass($asunto, $usuario, $password, $correo, $nombre) {
@@ -45,7 +54,8 @@ class mail_config extends PHPMailer {
         $this->mail->AddAddress($correo, $nombre);
         $this->mail->IsHTML(true);
 
-        if (!$this->mail->Send()) {
+        if (!$this->mail->send()) {
+            echo $this->mail->ErrorInfo;
             return "0";
         } else {
             return "1";
