@@ -5213,6 +5213,107 @@ class sivisae_consultas extends Bd {
         return mysql_insert_id();
     }
 
+    function cantHorariosInducciones($periodo, $zona, $cead, $escuela, $programa) {
+
+        $sql = "SELECT count(*) as conteo FROM (
+                    SELECT `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, `fecha_hora_fin`, 
+                    IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
+                    FROM `vta_induccion_horarios` 
+                    WHERE `periodo_academico_id` = $periodo ";
+
+        if ($cead != "T") {
+            $sql.= " AND `cead_cead_id` IN ($cead) ";
+        }
+
+        if ($zona != "T") {
+            $sql.= " AND `zona_id` IN ($zona) ";
+        }
+
+        if ($escuela != "T") {
+            $sql.= " AND `escuela` IN ('$escuela') ";
+        }
+
+        if ($programa != "T") {
+            $sql.= " AND `programa_id` IN ($programa) ";
+        }
+
+        $sql.= " ORDER BY `programa` ASC )AS a ";
+
+        //echo $sql.' ';
+
+        $resultado = mysql_query($sql);
+        $res = 0;
+        while ($fila = mysql_fetch_assoc($resultado)) {
+            $res = $fila['conteo'];
+        }
+
+        return $res;
+    }
+
+    function HorariosInducciones($periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page) {
+        $sql = "SELECT * FROM (
+                    SELECT `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, `fecha_hora_fin`, 
+                    IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
+                    FROM `vta_induccion_horarios` 
+                    WHERE `periodo_academico_id` = $periodo ";
+
+        if ($cead != "T") {
+            $sql.= " AND `cead_cead_id` IN ($cead) ";
+        }
+
+        if ($zona != "T") {
+            $sql.= " AND `zona_id` IN ($zona) ";
+        }
+
+        if ($escuela != "T") {
+            $sql.= " AND `escuela` IN ('$escuela') ";
+        }
+
+        if ($programa != "T") {
+            $sql.= " AND `programa_id` IN ($programa) ";
+        }
+
+        $sql.= " ORDER BY `programa` ASC )AS a LIMIT $page_position, $item_per_page;";
+
+        // echo $sql.' ';
+
+        $res = mysql_query($sql);
+
+        return $res;
+    }
+
+    function HorariosInduccionesExcel($periodo, $zona, $cead, $escuela, $programa) {
+        $sql = "SELECT * FROM (
+                    SELECT `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, `fecha_hora_fin`, 
+                    IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
+                    FROM `vta_induccion_horarios` 
+                    WHERE `periodo_academico_id` = $periodo ";
+
+        if ($cead != "T") {
+            $sql.= " AND `cead_cead_id` IN ($cead) ";
+        }
+
+        if ($zona != "T") {
+            $sql.= " AND `zona_id` IN ($zona) ";
+        }
+
+        if ($escuela != "T") {
+            $sql.= " AND `escuela` IN ('$escuela') ";
+        }
+
+        if ($programa != "T") {
+            $sql.= " AND `programa_id` IN ($programa) ";
+        }
+
+        $sql.= " ORDER BY `programa` ASC )AS a ;";
+
+        //echo $sql;
+
+        $res = mysql_query($sql);
+
+        return $res;
+    }
+
     // FIN METODOS INDUCCIÓN
 
     // FIN METODO ATENCION

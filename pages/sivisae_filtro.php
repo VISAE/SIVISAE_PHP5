@@ -161,11 +161,16 @@ $programa = $consulta->filtro_programas($filtro_escuelas, $_SESSION["programa_us
                             </td>
                             <?php
                         }
+
+                        if ($modulo != 38) {
                         ?>
                         <td>
                             Buscar: 
                             <input type="text" id="buscar" name="buscar" />
                         </td>
+                            <?php
+                        }
+                        ?>
 
 
 
@@ -261,7 +266,18 @@ $programa = $consulta->filtro_programas($filtro_escuelas, $_SESSION["programa_us
     </tr>
     <tr>
         <td colspan="5" style="alignment-adjust: central"><br>
-            <p><input id="crear" class="submit_fieldset_autenticacion" type="button" onclick="return listaEstudiantes()" value="Ver"/></p>
+            <p>
+                <?php
+                switch($modulo) {
+                    case 38: $r="return listaHorarios()";
+                    break;
+                    default: $r="return listaEstudiantes()";
+                    break;
+                }
+                echo '<input id="crear" class="submit_fieldset_autenticacion" type="button"
+                           onclick="'.$r.'" value="Ver" />';
+                ?>
+            </p>
         </td>
     </tr>
 </table>
