@@ -66,6 +66,7 @@ $consulta = new sivisae_consultas();
                 $disabled_delete = "";
             }
 
+            $_SESSION['opc_cr'] = "class='$class_copy' $disabled_copy";
             $_SESSION['opc_ed'] = "class='$class_edit' $disabled_edit";
             $_SESSION['opc_el'] = "class='$class_delete' $disabled_delete";
             $_SESSION['opc_ve'] = "class='boton_ver_encuesta'";
@@ -157,7 +158,7 @@ $consulta = new sivisae_consultas();
                 limpiaForm(form);
                 $('#result').html('');
                 $('#popup_crear').bPopup();
-                $("#perfil, #sede").chosen();
+                // $("#perfil, #sede").chosen();
             });
         }
 
@@ -209,6 +210,8 @@ $consulta = new sivisae_consultas();
                         var periodo = $("#periodo").val();
                         var escuela = $("#escuela").val();
                         var programa = $("#programa").val();
+                        var zona = $("#zona").val();
+                        var cead = $("#cead").val();
 
                         $("#list_horarios").on("click", ".pagination a", function (e) {
                             e.preventDefault();
@@ -227,6 +230,9 @@ $consulta = new sivisae_consultas();
                                 stopLoad();
                             });
                         });
+                        $('#popup_crear').remove();
+                        $('#add_button').load('pages/sivisae_crud_horario_induccion.php',
+                            {periodo:periodo, zona:zona, cead:cead, escuela:escuela, programa:programa});
                     }
                 });
                 return false;
@@ -382,11 +388,7 @@ $consulta = new sivisae_consultas();
                             </form>
                         </div>
                     </div>
-
-                    <?php
-                    include "sivisae_crud_horario_induccion.php";
-                    ?>
-
+                    <div id="add_button"></div>
                 </div>
 
             </main>

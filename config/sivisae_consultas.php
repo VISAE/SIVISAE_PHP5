@@ -5133,30 +5133,53 @@ class sivisae_consultas extends Bd {
 
     function consultaCentro($centro) {
         $sql = "SELECT 
-                c.`cead_id`, c.`descripcion`, c.`zona_zona_id` 
-                FROM `sivisae`.`cead` c 
-                WHERE c.`estado_estado_id` = 1
-                AND c.`descripcion` LIKE '%".$centro."%'";
+                c.`cead_id` AS 'cead_id', c.`descripcion` AS 'Centro', c.`zona_zona_id` AS 'zona_id', z.`descripcion` AS 'Zona'  
+                FROM `sivisae`.`cead` AS c INNER JOIN `sivisae`.`zona` AS z
+                ON c.`zona_zona_id` = z.`zona_id`
+                WHERE c.`estado_estado_id` = 1 ";
+        if (is_numeric($centro))
+            $sql .= "AND c.`cead_id` = '".$centro."'";
+        else
+            $sql .= "AND c.`descripcion` LIKE '%".$centro."%'";
+        $resultado = mysql_query($sql);
+        return $resultado;
+    }
+
+    function consultaZona($zona) {
+        $sql = "SELECT 
+                z.`zona_id` AS 'zona_id', z.`descripcion` AS 'Zona'  
+                FROM `sivisae`.`zona` AS z                
+                WHERE z.`estado_estado_id` = 1 ";
+        if(is_numeric($zona))
+            $sql .= " AND z.`zona_id` = '".$zona."'";
+        else
+            $sql .= " AND z.`descripcion` LIKE '%".$zona."%'";
         $resultado = mysql_query($sql);
         return $resultado;
     }
 
     function consultaPrograma($programa) {
         $sql = "SELECT 
-                p.`programa_id`, p.`descripcion`  
+                p.`programa_id` AS 'programa_id', p.`descripcion` AS 'Programa', p.`escuela` AS 'Escuela'  
                 FROM `sivisae`.`programa` p 
-                WHERE p.`estado_estado_id` = 1
-                AND p.`descripcion` LIKE '%$programa%' ";
+                WHERE p.`estado_estado_id` = 1 ";
+        if(is_numeric($programa))
+            $sql .= " AND p.`programa_id` = '".$programa."'";
+        else
+            $sql .= " AND p.`descripcion` LIKE '%$programa%' ";
         $resultado = mysql_query($sql);
         return $resultado;
     }
 
     function consultaPeriodo($periodo) {
         $sql = "SELECT
-                p.`periodo_academico_id`
+                p.`periodo_academico_id` AS 'periodo_academico_id', p.`descripcion` AS 'Periodo'
                 FROM `sivisae`.`periodo_academico` p
-                WHERE p.`estado_estado_id` = 1
-                AND p.`descripcion` = '".$periodo."'";
+                WHERE p.`estado_estado_id` = 1 ";
+        if(is_numeric($periodo))
+            $sql .= " AND p.`periodo_academico_id` = '".$periodo."'";
+        else
+            $sql .= " AND p.`descripcion` LIKE '%$periodo%' ";
         $resultado = mysql_query($sql);
         return $resultado;
     }
@@ -5312,6 +5335,20 @@ class sivisae_consultas extends Bd {
         $res = mysql_query($sql);
 
         return $res;
+    }
+
+    function verificarFechasInduccion($fecha, $periodo) {
+        $sql = "SELECT `periodo_academico_id`,`descripcion`,`fecha_inicio`, `fecha_fin` 
+                FROM `sivisae`.`periodo_academico` 
+                WHERE `periodo_academico_id` = $periodo 
+                AND '".$fecha."' BETWEEN `fecha_inicio` AND `fecha_fin` ";
+        $res = mysql_query($sql);
+        return $res;
+    }
+
+    function consultaEscuela($programa)
+    {
+        return $this->consultaPrograma($programa);
     }
 
     // FIN METODOS INDUCCIÓN
