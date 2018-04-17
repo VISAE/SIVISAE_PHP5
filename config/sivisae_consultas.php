@@ -5275,8 +5275,8 @@ class sivisae_consultas extends Bd {
 
     function HorariosInducciones($periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page) {
         $sql = "SELECT * FROM (
-                    SELECT `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, `fecha_hora_fin`, 
-                    IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
+                    SELECT `id_induccion_horario`, `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, 
+                    `fecha_hora_fin`, IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
                     FROM `vta_induccion_horarios` 
                     WHERE `periodo_academico_id` = $periodo ";
 
@@ -5307,8 +5307,8 @@ class sivisae_consultas extends Bd {
 
     function HorariosInduccionesExcel($periodo, $zona, $cead, $escuela, $programa) {
         $sql = "SELECT * FROM (
-                    SELECT `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, `fecha_hora_fin`, 
-                    IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
+                    SELECT `id_induccion_horario`, `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, 
+                    `fecha_hora_fin`, IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
                     FROM `vta_induccion_horarios` 
                     WHERE `periodo_academico_id` = $periodo ";
 
@@ -5349,6 +5349,15 @@ class sivisae_consultas extends Bd {
     function consultaEscuela($programa)
     {
         return $this->consultaPrograma($programa);
+    }
+
+    function agregaHorarioInduccion($periodo, $zona, $cead, $programa, $salon, $fecha_hora_inicio, $fecha_hora_fin, $cupos, $tipo_induccion) {
+        $sql = "INSERT INTO `sivisae`.`induccion_horarios` (`zona_zona_id`, `cead_cead_id`, `programa_programa_id`, 
+                            `periodo_academico_periodo_academico_id`, `salon`, `fecha_hora_inicio`, `fecha_hora_fin`, 
+                            `cupos`, `inscritos`, `tipo_induccion`)
+                VALUES ('$periodo', '$zona', '$cead', '$programa', '$salon', '$fecha_hora_inicio', '$fecha_hora_fin', '$cupos', '0', '$tipo_induccion'); ";
+        $res = mysql_query($sql);
+        return mysql_insert_id();
     }
 
     // FIN METODOS INDUCCIÓN

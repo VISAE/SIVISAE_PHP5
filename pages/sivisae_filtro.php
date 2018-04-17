@@ -269,7 +269,7 @@ $programa = $consulta->filtro_programas($filtro_escuelas, $_SESSION["programa_us
             <p>
                 <?php
                 switch($modulo) {
-                    case 38: $r="return listaHorarios()";
+                    case 38: $r="return listaHorarios(true)";
                     break;
                     default: $r="return listaEstudiantes()";
                     break;

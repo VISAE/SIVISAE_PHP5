@@ -77,25 +77,41 @@ if (count($inducciones) <= 0) {
                                                 <th>CUPOS</th>
                                                 <th>INSCRITOS</th>
                                                 <th>TIPO INDUCCION</th>
+                                                <th colspan='2'>ACCIONES (Doble click)</th>
 					</tr>
 				</thead>
                         <tbody>
                     ";
     while ($row = mysql_fetch_array($inducciones)) {
+        $horario_id = $row[0];
+        $zona_des = $row[1];
+        $cead_des = $row[2];
+        $programa_des = $row[3];
+        $escuela_des = $row[4];
+        $periodo_academico = $row[5];
+        $fecha_y_hora_inicial = $row[6];
+        $fecha_y_hora_final = $row[7];
+        $salon = $row[8];
+        $cupos = $row[9];
+        $inscritos = $row[10];
+        $tipo_induccion = $row[11];
 
         echo "<tr>"
-        . "<td>$row[0]</td>"
-        . "<td>$row[1]</td>"
-        . "<td>$row[2]</td>"
-        . "<td>$row[3]</td>"
-        . "<td>$row[4]</td>"
-        . "<td>$row[5]</td>"
-        . "<td>$row[6]</td>"
-        . "<td>$row[7]</td>"
-        . "<td>$row[8]</td>"
-        . "<td>$row[9]</td>"
-        . "<td>$row[11]</td>"
-        . "<td>$row[11]</td>";
+        . "<td>$zona_des</td>"
+        . "<td>$cead_des</td>"
+        . "<td>$programa_des</td>"
+        . "<td>$escuela_des</td>"
+        . "<td>$periodo_academico</td>"
+        . "<td>$fecha_y_hora_inicial</td>"
+        . "<td>$fecha_y_hora_final</td>"
+        . "<td>$salon</td>"
+        . "<td>$cupos</td>"
+        . "<td>$inscritos</td>"
+        . "<td>$tipo_induccion</td>"
+        . "<td> <button title='Editar Horario' ".$_SESSION['opc_ed']." id='boton_editar" . $horario_id . "' onclick='activarpopupeditar(" . $horario_id . ")'></button> </td>"
+        . "<td> <button title='Eliminar Horario' ".$_SESSION['opc_el']."  id='boton_eliminar" . $horario_id . "' onclick='activarpopupeliminar(" . $horario_id . ")'></button> </td>"
+        . "<input type='hidden' id='input_" . $horario_id . "' value='" . $horario_id . "|" . $zona_des . "|" . $cead_des . "|" . $programa_des . "|" . $escuela_des . "|" . $periodo_academico . "|" . $fecha_y_hora_inicial . "|" . $fecha_y_hora_final . "|" . $salon . "|" . $cupos . "|" . $inscritos . "|" . $tipo_induccion . "'></input>"
+        . "</tr>";
     }
 
     echo "     </tbody>
@@ -111,4 +127,31 @@ if (count($inducciones) <= 0) {
     . '<input type="hidden" id="est_hid" name="est_hid[]"/>'
     . '</div>';
 }
+
+// validación para mostrar popup agregar horario
+if($zona !== "T" && $cead !== "T" && $programa !== "T") {
+    date_default_timezone_get('America/Bogota');
+    $fecha = date('Y/m/d', time());
+    $validaFecha = $consulta->verificarFechasInduccion($fecha, $periodo);
+    if($row = mysql_fetch_array($validaFecha)) {
+        echo '<script>
+                $("#boton_crear").show();
+                $("#hiddenPeriodo").val("'.$periodo.'");
+                $("#hiddenZona").val("'.$zona.'");
+                $("#hiddenCead").val("'.$cead.'");
+                $("#hiddenPrograma").val("'.$programa.'");
+                $("#fecha_hora_inicio").val("'.$row[2].'T12:00");
+                $("#fecha_hora_fin").val("'.$row[3].'T12:00");
+              </script>';
+    } else {
+        echo '<script>
+                $("#boton_crear").hide();
+              </script>';
+    }
+} else {
+    echo '<script>
+            $("#boton_crear").hide();
+          </script>';
+}
+
 $consulta->destruir();

@@ -110,6 +110,10 @@ $consulta = new sivisae_consultas();
                 });
                 return false;
             });
+            $("#boton_crear").hide();
+            $(document).on('change','.chosen-select, .chosen-select-deselect', function () {
+                $("#boton_crear").hide();
+            });
         });
 
         function nobackbutton() {
@@ -157,11 +161,64 @@ $consulta = new sivisae_consultas();
                 var form = document.crear_horario;
                 limpiaForm(form);
                 $('#result').html('');
+                $('#datosGenerales').html(
+                    "Periodo: "+$('#periodo option:selected').text()+"<br/>" +
+                    "Zona:"+$('#zona option:selected').text()+"<br/>" +
+                    "Cead:"+$('#cead option:selected').text()+"<br/>" +
+                    "Escuela:"+$('#escuela option:selected').text()+"<br/>" +
+                    "Programa:"+$('#programa option:selected').text()
+                );
                 $('#popup_crear').bPopup();
-                // $("#perfil, #sede").chosen();
+                $("#tipo_induccion").chosen();
             });
         }
 
+        function activarpopupeditar(id) {
+            //Editar
+            $('#boton_editar' + id).bind('click', function (e) {
+                e.preventDefault();
+                var form = document.editar_horario;
+                limpiaForm(form);
+                cargar_popup_editar(id);
+                $('#popup_editar').bPopup();
+                $("#tipo_induccion_e").chosen();
+            });
+        }
+
+        function cargar_popup_editar(id) {
+            console.log(id);
+
+            var str = $('#input_' + id).val();
+            var ids = str.split("|");
+            //Se llenan los campos segun el formulario
+            $('#datosGenerales').html(
+                "Periodo: "+ids[5]+"<br/>" +
+                "Zona:"+ids[1]+"<br/>" +
+                "Cead:"+ids[2]+"<br/>" +
+                "Escuela:"+ids[4]+"<br/>" +
+                "Programa:"+ids[3]
+            );
+            var fechaIni = ids[6].split(" ");
+            document.getElementById("fecha_hora_inicio_e").value = fechaIni[0]+"T"+fechaIni[1];
+            var fechaFin = ids[7].split(" ");
+            document.getElementById("fecha_hora_fin_e").value = fechaFin[0]+"T"+fechaFin[1];
+            document.getElementById("salon_e").value = ids[8];
+            document.getElementById("cupos_e").value = ids[9];
+            $("#tipo_induccion_e").val(ids[11]);
+            //Se limpia estado
+            $('#result_e').html('');
+        }
+
+        function activarpopupeliminar(id, perfil) {
+            //Eliminar
+            $('#boton_eliminar' + id).bind('click', function (e) {
+                e.preventDefault();
+                document.getElementById("id_el").value = id;
+                document.getElementById("id_el_p").value = perfil;
+                $('#result_el').html('');
+                $('#popup_eliminar').bPopup();
+            });
+        }
         ///Popup - fin
 
 
@@ -171,26 +228,73 @@ $consulta = new sivisae_consultas();
         function submitFormCrear() {
             $('#btn_submit').attr("disabled", true);
             $("#spinner").show();
-            var form = document.crear_usuario;
+            var form = document.crear_horario;
             var dataString = $(form).serialize();
             $.ajax({
                 type: 'POST',
-                url: 'src/creacion_usuarioCB.php',
+                url: 'src/creacion_horarioCB.php',
                 data: dataString,
                 success: function (data) {
-                    limpiaForm(form);
                     $('#btn_submit').attr("disabled", false);
                     $('#result').html(data);
                     $("#spinner").hide();
                     //Se recarga la grilla
-                    listaEstudiantes();
+                    listaHorarios(false);
                     setTimeout("CerrarPopup(1)", 1000);
+                    if(!$('#popup_crear').is(":visible"))
+                        limpiaForm(form);
                 }
             });
             return false;
         }
 
-        function listaHorarios() {
+        ///Editar
+        function submitFormEditar() {
+            $('#btn_submit_e').attr("disabled", true);
+            $("#spinner_e").show();
+            var form = document.editar_usuario;
+            var dataString = $(form).serialize();
+            $.ajax({
+                type: 'POST',
+                url: 'src/actualiza_horarioCB.php',
+                data: dataString,
+                success: function (data) {
+                    limpiaForm(form);
+                    $('#btn_submit_e').attr("disabled", false);
+                    $('#result_e').html(data);
+                    $("#spinner_e").hide();
+                    //Se recarga la grilla
+                    listaEstudiantes();
+                    setTimeout("CerrarPopup(2)", 1000);
+                }
+            });
+            return false;
+        }
+
+        ///Eliminar
+        function submitFormEliminar() {
+            $('#btn_submit_el').attr("disabled", true);
+            $("#spinner_el").show();
+            var form = document.eliminar_usuario;
+            var dataString = $(form).serialize();
+            $.ajax({
+                type: 'POST',
+                url: 'src/eliminar_horarioCB.php',
+                data: dataString,
+                success: function (data) {
+                    limpiaForm(form);
+                    $('#btn_submit_el').attr("disabled", false);
+                    $('#result_el').html(data);
+                    $("#spinner_el").hide();
+                    //Se recarga la grilla
+                    listaEstudiantes();
+                    setTimeout("CerrarPopup(3)", 1000);
+                }
+            });
+            return false;
+        }
+
+        function listaHorarios(muestraLoad) {
             if ($('#periodo').val() !== '') {
                 var form = document.gestion_auditores;
                 var dataString = $(form).serialize();
@@ -199,10 +303,10 @@ $consulta = new sivisae_consultas();
                     url: 'src/horarios_induccionCB.php',
                     data: dataString,
                     beforeSend: function () {
-                        startLoad();
+                        if(muestraLoad) startLoad();
                     },
                     success: function (data) {
-                        stopLoad();
+                        if(muestraLoad) stopLoad();
                         $('#list_horarios').html(data);
                         var aud = $("#auditor").val();
                         var reg = $("#registros").val();
@@ -210,8 +314,6 @@ $consulta = new sivisae_consultas();
                         var periodo = $("#periodo").val();
                         var escuela = $("#escuela").val();
                         var programa = $("#programa").val();
-                        var zona = $("#zona").val();
-                        var cead = $("#cead").val();
 
                         $("#list_horarios").on("click", ".pagination a", function (e) {
                             e.preventDefault();
@@ -230,9 +332,6 @@ $consulta = new sivisae_consultas();
                                 stopLoad();
                             });
                         });
-                        $('#popup_crear').remove();
-                        $('#add_button').load('pages/sivisae_crud_horario_induccion.php',
-                            {periodo:periodo, zona:zona, cead:cead, escuela:escuela, programa:programa});
                     }
                 });
                 return false;
@@ -331,6 +430,10 @@ $consulta = new sivisae_consultas();
                 // pero su valor no debe ser cambiado
                 else if (type === 'checkbox' || type === 'radio')
                     this.checked = false;
+                else if (type === 'number')
+                    this.value = "";
+                else if (type === 'datetime-local')
+                    this.value = this.defaultValue;
                 // los selects le ponesmos el indice a -
                 else if (tag === 'select')
                 {
@@ -388,7 +491,9 @@ $consulta = new sivisae_consultas();
                             </form>
                         </div>
                     </div>
-                    <div id="add_button"></div>
+                    <?php
+                    include "sivisae_crud_horario_induccion.php";
+                    ?>
                 </div>
 
             </main>
