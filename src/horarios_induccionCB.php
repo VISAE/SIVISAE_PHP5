@@ -94,7 +94,8 @@ if (count($inducciones) <= 0) {
         $salon = $row[8];
         $cupos = $row[9];
         $inscritos = $row[10];
-        $tipo_induccion = $row[11];
+        $tipo_induccion_id = $row[11];
+        $tipo_induccion = $row[12];
 
         echo "<tr>"
         . "<td>$zona_des</td>"
@@ -110,7 +111,7 @@ if (count($inducciones) <= 0) {
         . "<td>$tipo_induccion</td>"
         . "<td> <button title='Editar Horario' ".$_SESSION['opc_ed']." id='boton_editar" . $horario_id . "' onclick='activarpopupeditar(" . $horario_id . ")'></button> </td>"
         . "<td> <button title='Eliminar Horario' ".$_SESSION['opc_el']."  id='boton_eliminar" . $horario_id . "' onclick='activarpopupeliminar(" . $horario_id . ")'></button> </td>"
-        . "<input type='hidden' id='input_" . $horario_id . "' value='" . $horario_id . "|" . $zona_des . "|" . $cead_des . "|" . $programa_des . "|" . $escuela_des . "|" . $periodo_academico . "|" . $fecha_y_hora_inicial . "|" . $fecha_y_hora_final . "|" . $salon . "|" . $cupos . "|" . $inscritos . "|" . $tipo_induccion . "'></input>"
+        . "<input type='hidden' id='input_" . $horario_id . "' value='" . $horario_id . "|" . $zona_des . "|" . $cead_des . "|" . $programa_des . "|" . $escuela_des . "|" . $periodo_academico . "|" . $fecha_y_hora_inicial . "|" . $fecha_y_hora_final . "|" . $salon . "|" . $cupos . "|" . $inscritos . "|" . $tipo_induccion_id . "'></input>"
         . "</tr>";
     }
 

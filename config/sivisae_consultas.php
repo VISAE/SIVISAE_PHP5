@@ -5240,9 +5240,10 @@ class sivisae_consultas extends Bd {
 
         $sql = "SELECT count(*) as conteo FROM (
                     SELECT `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, `fecha_hora_fin`, 
-                    IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
+                    IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`, `estado_estado_id`
                     FROM `vta_induccion_horarios` 
-                    WHERE `periodo_academico_id` = $periodo ";
+                    WHERE `periodo_academico_id` = $periodo
+                    AND `estado_estado_id` = 1 ";
 
         if ($cead != "T") {
             $sql.= " AND `cead_cead_id` IN ($cead) ";
@@ -5276,7 +5277,7 @@ class sivisae_consultas extends Bd {
     function HorariosInducciones($periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page) {
         $sql = "SELECT * FROM (
                     SELECT `id_induccion_horario`, `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, 
-                    `fecha_hora_fin`, IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
+                    `fecha_hora_fin`, IFNULL(NULLIF(TRIM(`salon`),''), 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion_id`, `tipo_induccion`
                     FROM `vta_induccion_horarios` 
                     WHERE `periodo_academico_id` = $periodo ";
 
@@ -5307,7 +5308,7 @@ class sivisae_consultas extends Bd {
 
     function HorariosInduccionesExcel($periodo, $zona, $cead, $escuela, $programa) {
         $sql = "SELECT * FROM (
-                    SELECT `id_induccion_horario`, `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, 
+                    SELECT `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, 
                     `fecha_hora_fin`, IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`
                     FROM `vta_induccion_horarios` 
                     WHERE `periodo_academico_id` = $periodo ";
@@ -5354,10 +5355,37 @@ class sivisae_consultas extends Bd {
     function agregaHorarioInduccion($periodo, $zona, $cead, $programa, $salon, $fecha_hora_inicio, $fecha_hora_fin, $cupos, $tipo_induccion) {
         $sql = "INSERT INTO `sivisae`.`induccion_horarios` (`zona_zona_id`, `cead_cead_id`, `programa_programa_id`, 
                             `periodo_academico_periodo_academico_id`, `salon`, `fecha_hora_inicio`, `fecha_hora_fin`, 
-                            `cupos`, `inscritos`, `tipo_induccion`)
-                VALUES ('$periodo', '$zona', '$cead', '$programa', '$salon', '$fecha_hora_inicio', '$fecha_hora_fin', '$cupos', '0', '$tipo_induccion'); ";
+                            `cupos`, `inscritos`, `tipo_induccion`, `estado_estado_id`)
+                VALUES ('$periodo', '$zona', '$cead', '$programa', '$salon', '$fecha_hora_inicio', '$fecha_hora_fin', '$cupos', '0', '$tipo_induccion', '1'); ";
         $res = mysql_query($sql);
         return mysql_insert_id();
+    }
+
+    function actualizarHorario($horario, $salon, $fecha_hora_inicio, $fecha_hora_fin, $cupos, $tipo_induccion) {
+        //Se actualiza el horario
+        $sql = "UPDATE `sivisae`.`induccion_horarios` 
+                SET `salon`='$salon', `fecha_hora_inicio`='$fecha_hora_inicio', `fecha_hora_fin`='$fecha_hora_fin', `cupos`='$cupos', `tipo_induccion`='$tipo_induccion'
+                WHERE `id_induccion_horario`='$horario';";
+        mysql_query($sql);
+        if (mysql_affected_rows() > 0) {
+            $rta = "<span style='color: green; font-weight: bold;'>Se actualizó la informacion del horario correctamente.</span>";
+        } else {
+            $rta = "<span style='color: red; font-weight: bold;'>No se pudo actualizar la información del horario, por favor intente nuevamente.</span>";
+        }
+        return $rta;
+    }
+
+    function eliminarHorario($id_upd) {
+        //eliminar el Horario
+        $sql2 = "update `sivisae`.`induccion_horarios` set `estado_estado_id`=3 where `id_induccion_horario`=$id_upd";
+        mysql_query($sql2);
+        $banAct = mysql_affected_rows();
+        if ($banAct > 0) {
+            $rta = "<span style='color: green; font-weight: bold;'>Se eliminó el horario correctamente.</span>";
+        } else {
+            $rta = "<span style='color: red; font-weight: bold;'>El horario no pudo ser eliminado, por favor intente nuevamente.</span>";
+        }
+        return $rta;
     }
 
     // FIN METODOS INDUCCIÓN

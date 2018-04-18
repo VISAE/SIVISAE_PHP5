@@ -24,9 +24,11 @@ $comparaFechas = strtotime($fecha_hora_inicio) < strtotime($fecha_hora_fin);
 if($fi = mysql_fetch_array($validaFechaInicial) && $ff = mysql_fetch_array($validaFechaFinal) && $comparaFechas) {
     $row = $insert->agregaHorarioInduccion($zona, $cead, $programa, $periodo, $salon, $fecha_hora_inicio, $fecha_hora_fin, $cupos, $tipo_induccion);
     if($row > 0)
-        echo "Horario agregado existosamente";
+        echo "<span style='color: green; font-weight: bold;'>Horario agregado existosamente</span>";
     else
-        echo "Error al agregar horario",$zona, $cead, $programa, $periodo, $salon, $fecha_hora_inicio, $fecha_hora_fin, $cupos, $tipo_induccion;
+        echo "<span style='color: red; font-weight: bold;'>Error al agregar horario</span>";
 } else {
-    echo "Error: Las fechas se no se encuentran en el rango del periodo académico";
+    echo "<span style='color: red; font-weight: bold;'>Error: Las fechas se no se encuentran en el rango del periodo académico</span>";
 }
+
+$insert->destruir();

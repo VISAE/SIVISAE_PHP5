@@ -24,11 +24,11 @@ while ($fila = mysql_fetch_array($temp)) {
 }
 
 
-$titulo = "Reporte de inducción";
+$titulo = "Reporte de horarios de inducción";
 
-$columnas = array("DOCUMENTO ESTUDIANTE", "NOMBRE", "TELÉFONO", "CORREO", "PROGRAMA", "ESCUELA", "CENTRO", "ZONA", "PERIODO", "TIPO", "FECHA INDUCCIÓN", "TIPO INDUCCIÓN", "TIPO PARTICIPACIÓN");
-$nombre_arch = "Reporte Inducción";
-$desc = "Reporte que contiene un listado inducciones.";
+$columnas = array("ZONA", "CEAD", "PROGRAMA", "ESCUELA", "PERIODO ACADEMICO", "FECHA Y HORA INICIAL", "FECHA Y HORA FINAL", "SALÓN", "CUPOS", "INSCRITOS", "TIPO INDUCCION");
+$nombre_arch = "Reporte Horarios Induccion";
+$desc = "Reporte que contiene un listado de horarios de inducciones.";
 $ruta = generarReporte($titulo, $columnas, $asignar, $nombre_arch, $desc);
 
 echo $ruta;

@@ -47,20 +47,19 @@
                                 <tr>
                                     <td>Salón (*):</td>
                                     <td><input style="width: 230px;" id="salon" name="salon" type="text"
-                                               maxlength="30" required="Falta indicar el salón"/></td>
+                                               maxlength="30" /></td>
                                 </tr>
                                 <tr>
                                     <td>Cupos (*):</td>
                                     <td><input style="width: 230px;" id="cupos" name="cupos" type="number"
                                                maxlength="3" min="0" step="1"
-                                               onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                                required="Falta la cantidad de cupos"/></td>
                                 </tr>
                                 <tr>
                                     <td>Tipo de inducción (*):</td>
                                     <td><select style="width: 230px;" id="tipo_induccion" name="tipo_induccion" data-placeholder='Seleccione tipo de inducción' required="Falta tipo de inducción">
                                             <option value="1">Inducción General</option>
-                                            <option value="2">Immersión a Campus</option>
+                                            <option value="2">Inmersión a Campus</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -105,10 +104,8 @@
                                         Escuela:
                                         Programa:
                                     </label>
+                                    <input type="hidden" name="horario" id="hiddenhorario_e" />
                                     <input type="hidden" name="periodo" id="hiddenPeriodo_e" />
-                                    <input type="hidden" name="zona" id="hiddenZona_e" />
-                                    <input type="hidden" name="cead" id="hiddenCead_e" />
-                                    <input type="hidden" name="programa" id="hiddenPrograma_e" />
                                 </td>
                             </tr>
                             <tr>
@@ -122,22 +119,21 @@
                                            maxlength="30" required="Falta la fecha y hora"/></td>
                             </tr>
                             <tr>
-                                <td>Salón (*):</td>
+                                <td>Salón :</td>
                                 <td><input style="width: 230px;" id="salon_e" name="salon" type="text"
-                                           maxlength="30" required="Falta indicar el salón"/></td>
+                                           maxlength="30" /></td>
                             </tr>
                             <tr>
                                 <td>Cupos (*):</td>
                                 <td><input style="width: 230px;" id="cupos_e" name="cupos" type="number"
                                            maxlength="3" min="0" step="1"
-                                           onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                                            required="Falta la cantidad de cupos"/></td>
                             </tr>
                             <tr>
                                 <td>Tipo de inducción (*):</td>
                                 <td><select style="width: 230px;" id="tipo_induccion_e" name="tipo_induccion" data-placeholder='Seleccione tipo de inducción' required="Falta tipo de inducción">
                                         <option value="1">Inducción General</option>
-                                        <option value="2">Immersión a Campus</option>
+                                        <option value="2">Inmersión a Campus</option>
                                     </select>
                                 </td>
                             </tr>
@@ -178,10 +174,12 @@
                                 <td><label>¿Realmente desea eliminar el horario?.</label></td>
                             </tr>
                             <tr>
+                                <td><label id="datosGenerales_el"></label></td>
+                            </tr>
+                            <tr>
                                 <td colspan="2">
-                                    <input style="width: 180px;" id="id_el" name="id_e" type="hidden" maxlength="30" />
-                                    <input style="width: 180px;" id="id_el_p" name="id_e_p" type="hidden" maxlength="30" />
-                                    <p><input class="submit_fieldset_autenticacion" type="submit" value="Eliminar"/></p>
+                                    <input style="width: 180px;" id="id_el" name="id_el" type="hidden" maxlength="30" />
+                                    <p><input id="btn_submit_el" class="submit_fieldset_autenticacion" type="submit" value="Eliminar"/></p>
                                     <div align="center" id="result_el"></div>
                                     <div id="spinner_el" align="center" style="display:none;">
                                         <img id="img-spinner" width="50" height="50" src="template/imagenes/generales/loading.gif" alt="Loading"/>

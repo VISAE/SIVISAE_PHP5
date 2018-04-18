@@ -127,7 +127,7 @@ $consulta = new sivisae_consultas();
         ///validaciones - inicio
 
         $(document).ready(function () {
-            $("#telefono, #celular, #cedula, #telefono_e, #celular_e, #cedula_e").keydown(function (event) {
+            $("#cupos, #cupos_e").keydown(function (event) {
                 if (event.shiftKey)
                 {
                     event.preventDefault();
@@ -162,11 +162,11 @@ $consulta = new sivisae_consultas();
                 limpiaForm(form);
                 $('#result').html('');
                 $('#datosGenerales').html(
-                    "Periodo: "+$('#periodo option:selected').text()+"<br/>" +
-                    "Zona:"+$('#zona option:selected').text()+"<br/>" +
-                    "Cead:"+$('#cead option:selected').text()+"<br/>" +
-                    "Escuela:"+$('#escuela option:selected').text()+"<br/>" +
-                    "Programa:"+$('#programa option:selected').text()
+                    "<strong>Periodo:</strong> "+$('#periodo option:selected').text()+"<br/>" +
+                    "<strong>Zona:</strong> "+$('#zona option:selected').text()+"<br/>" +
+                    "<strong>Cead:</strong> "+$('#cead option:selected').text()+"<br/>" +
+                    "<strong>Escuela:</strong> "+$('#escuela option:selected').text()+"<br/>" +
+                    "<strong>Programa:</strong> "+$('#programa option:selected').text()
                 );
                 $('#popup_crear').bPopup();
                 $("#tipo_induccion").chosen();
@@ -186,18 +186,18 @@ $consulta = new sivisae_consultas();
         }
 
         function cargar_popup_editar(id) {
-            console.log(id);
-
             var str = $('#input_' + id).val();
             var ids = str.split("|");
             //Se llenan los campos segun el formulario
-            $('#datosGenerales').html(
-                "Periodo: "+ids[5]+"<br/>" +
-                "Zona:"+ids[1]+"<br/>" +
-                "Cead:"+ids[2]+"<br/>" +
-                "Escuela:"+ids[4]+"<br/>" +
-                "Programa:"+ids[3]
+            $('#datosGenerales_e').html(
+                "<strong>Periodo:</strong> "+ids[5]+"<br/>" +
+                "<strong>Zona:</strong> "+ids[1]+"<br/>" +
+                "<strong>Cead:</strong> "+ids[2]+"<br/>" +
+                "<strong>Escuela:</strong> "+ids[4]+"<br/>" +
+                "<strong>Programa:</strong> "+ids[3]
             );
+            document.getElementById("hiddenhorario_e").value = ids[0];
+            document.getElementById("hiddenPeriodo_e").value = $("#periodo").val();
             var fechaIni = ids[6].split(" ");
             document.getElementById("fecha_hora_inicio_e").value = fechaIni[0]+"T"+fechaIni[1];
             var fechaFin = ids[7].split(" ");
@@ -209,12 +209,25 @@ $consulta = new sivisae_consultas();
             $('#result_e').html('');
         }
 
-        function activarpopupeliminar(id, perfil) {
+        function activarpopupeliminar(id) {
             //Eliminar
             $('#boton_eliminar' + id).bind('click', function (e) {
                 e.preventDefault();
+                var fila = $('#boton_eliminar' + id).parent().parent().children();
+                $('#datosGenerales_el').html(
+                    "<strong>Periodo:</strong> "+fila[4].textContent+"<br/>" +
+                    "<strong>Zona:</strong> "+fila[0].textContent+"<br/>" +
+                    "<strong>Cead:</strong> "+fila[1].textContent+"<br/>" +
+                    "<strong>Escuela:</strong> "+fila[2].textContent+"<br/>" +
+                    "<strong>Programa:</strong> "+fila[3].textContent+"<br/>" +
+                    "<strong>Fecha y Hora Inicial:</strong> "+fila[5].textContent+"<br/>" +
+                    "<strong>Fecha y Hora Final:</strong> "+fila[6].textContent+"<br/>" +
+                    "<strong>Salón:</strong> "+fila[7].textContent+"<br/>" +
+                    "<strong>Cupos:</strong> "+fila[8].textContent+"<br/>" +
+                    "<strong>Inscritos:</strong> "+fila[9].textContent+"<br/>" +
+                    "<strong>Tipo de Inducción:</strong> "+fila[10].textContent+"<br/>"
+                );
                 document.getElementById("id_el").value = id;
-                document.getElementById("id_el_p").value = perfil;
                 $('#result_el').html('');
                 $('#popup_eliminar').bPopup();
             });
@@ -252,20 +265,21 @@ $consulta = new sivisae_consultas();
         function submitFormEditar() {
             $('#btn_submit_e').attr("disabled", true);
             $("#spinner_e").show();
-            var form = document.editar_usuario;
+            var form = document.editar_horario;
             var dataString = $(form).serialize();
             $.ajax({
                 type: 'POST',
                 url: 'src/actualiza_horarioCB.php',
                 data: dataString,
                 success: function (data) {
-                    limpiaForm(form);
                     $('#btn_submit_e').attr("disabled", false);
                     $('#result_e').html(data);
                     $("#spinner_e").hide();
                     //Se recarga la grilla
-                    listaEstudiantes();
+                    listaHorarios(false);
                     setTimeout("CerrarPopup(2)", 1000);
+                    if(!$('#popup_editar').is(":visible"))
+                        limpiaForm(form);
                 }
             });
             return false;
@@ -275,20 +289,21 @@ $consulta = new sivisae_consultas();
         function submitFormEliminar() {
             $('#btn_submit_el').attr("disabled", true);
             $("#spinner_el").show();
-            var form = document.eliminar_usuario;
+            var form = document.eliminar_horario;
             var dataString = $(form).serialize();
             $.ajax({
                 type: 'POST',
                 url: 'src/eliminar_horarioCB.php',
                 data: dataString,
                 success: function (data) {
-                    limpiaForm(form);
                     $('#btn_submit_el').attr("disabled", false);
                     $('#result_el').html(data);
                     $("#spinner_el").hide();
                     //Se recarga la grilla
-                    listaEstudiantes();
+                    listaHorarios(false);
                     setTimeout("CerrarPopup(3)", 1000);
+                    if(!$('#popup_eliminar').is(":visible"))
+                        limpiaForm(form);
                 }
             });
             return false;
@@ -486,9 +501,10 @@ $consulta = new sivisae_consultas();
                                 <?php
                                 include "sivisae_filtro.php";
                                 ?>
-                                <div id="list_horarios">
-                                </div>
+
                             </form>
+                            <div id="list_horarios">
+                            </div>
                         </div>
                     </div>
                     <?php
