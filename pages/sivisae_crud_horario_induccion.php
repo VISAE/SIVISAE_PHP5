@@ -47,7 +47,7 @@
                                 <tr>
                                     <td>Salón (*):</td>
                                     <td><input style="width: 230px;" id="salon" name="salon" type="text"
-                                               maxlength="30" /></td>
+                                               maxlength="30" required="Falta indicar el salón"/></td>
                                 </tr>
                                 <tr>
                                     <td>Cupos (*):</td>

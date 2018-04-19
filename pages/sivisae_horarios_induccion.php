@@ -114,6 +114,15 @@ $consulta = new sivisae_consultas();
             $(document).on('change','.chosen-select, .chosen-select-deselect', function () {
                 $("#boton_crear").hide();
             });
+            $("#tipo_induccion, #tipo_induccion_e").change(function () {
+                if($(this).val() === '2') {
+                    $("#salon, #salon_e").val('Virtual');
+                    $("#salon, #salon_e").prop('readonly',true);
+                } else {
+                    $("#salon, #salon_e").val('');
+                    $("#salon, #salon_e").prop('readonly',false);
+                }
+            });
         });
 
         function nobackbutton() {
@@ -168,7 +177,18 @@ $consulta = new sivisae_consultas();
                     "<strong>Escuela:</strong> "+$('#escuela option:selected').text()+"<br/>" +
                     "<strong>Programa:</strong> "+$('#programa option:selected').text()
                 );
-                $('#popup_crear').bPopup();
+                var fIni = $('#fecha_hora_inicio').val();
+                var fFin = $('#fecha_hora_fin').val();
+                $('#popup_crear').bPopup({
+                    onOpen: function () {
+                        $('#salon').attr('readonly', false);
+                        $('#cupos').val('');
+                    },
+                    onClose: function () {
+                        $('#fecha_hora_inicio').val(fIni);
+                        $('#fecha_hora_fin').val(fFin);
+                    }
+                });
                 $("#tipo_induccion").chosen();
             });
         }
@@ -205,6 +225,10 @@ $consulta = new sivisae_consultas();
             document.getElementById("salon_e").value = ids[8];
             document.getElementById("cupos_e").value = ids[9];
             $("#tipo_induccion_e").val(ids[11]);
+            if(ids[11] === '2')
+                $("#salon_e").prop('readonly',true);
+            else
+                $("#salon_e").prop('readonly',false);
             //Se limpia estado
             $('#result_e').html('');
         }
@@ -439,22 +463,22 @@ $consulta = new sivisae_consultas();
                 var type = this.type;
                 var tag = this.tagName.toLowerCase();
                 //limpiamos los valores de los campos…
-                if (type === 'text' || type === 'password' || tag === 'textarea')
+                if (type === 'text' || type === 'password' || tag === 'textarea') {
                     this.value = "";
+                    $(this).attr('readonly', false);
+                }
                 // excepto de los checkboxes y radios, le quitamos el checked
                 // pero su valor no debe ser cambiado
                 else if (type === 'checkbox' || type === 'radio')
                     this.checked = false;
-                else if (type === 'number')
-                    this.value = "";
                 else if (type === 'datetime-local')
                     this.value = this.defaultValue;
                 // los selects le ponesmos el indice a -
                 else if (tag === 'select')
                 {
-                    this.selectedIndex = 0;
+                    this.selectedIndex = -1;
                     $(this).chosen('destroy');
-                    $(this).prop('selectedIndex', 0);
+                    $(this).prop('selectedIndex', -1);
                 }
             });
         }
