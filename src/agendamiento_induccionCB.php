@@ -82,6 +82,7 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
             </table>
         </div>
     ";
+
     echo json_encode(array(
         'title' => 'Resultado de la consulta',
         'text' => "Información de: $row[0]\n$row[1]",
