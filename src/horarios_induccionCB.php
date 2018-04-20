@@ -142,7 +142,7 @@ if($zona !== "T" && $cead !== "T" && $programa !== "T") {
                 $("#hiddenCead").val("'.$cead.'");
                 $("#hiddenPrograma").val("'.$programa.'");
                 $("#fecha_hora_inicio").val("'.$row[2].'T12:00");
-                $("#fecha_hora_fin").val("'.$row[3].'T12:00");
+                $("#fecha_hora_fin").val("'.$row[2].'T12:00");
               </script>';
     } else {
         echo '<script>

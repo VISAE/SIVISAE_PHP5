@@ -123,6 +123,9 @@ $consulta = new sivisae_consultas();
                     $("#salon, #salon_e").prop('readonly',false);
                 }
             });
+            $("#fecha_hora_inicio").change(function () {
+                $("#fecha_hora_fin").val($(this).val());
+            });
         });
 
         function nobackbutton() {
@@ -186,7 +189,7 @@ $consulta = new sivisae_consultas();
                     },
                     onClose: function () {
                         $('#fecha_hora_inicio').val(fIni);
-                        $('#fecha_hora_fin').val(fFin);
+                        $('#fecha_hora_fin').val(fIni);
                     }
                 });
                 $("#tipo_induccion").chosen();
