@@ -217,6 +217,31 @@ $consulta = new sivisae_consultas();
 
                 })(jQuery);
 
+                // agregar
+
+                function HorarioCRUD(operacion) {
+                    if($('input:radio[name="horario"]').is(":checked")) {
+                        $('#crud').val(operacion);
+                        //console.log($('input:radio[name="horario"]:checked').val());
+                        var form = document.forms.formHorarios;
+                        var dataString = $(form).serialize();
+                        console.log(dataString);
+                        $.ajax({
+                            type: 'POST',
+                            url: 'src/CRUD_Induccion_Horario_estudiante.php',
+                            data: dataString,
+                            success: function (data) {
+                                data = JSON.parse(data);
+                                $('#formHorarios')[0].reset();
+                                showSwal(data.title, data.text, data.type);
+                            }
+                        });
+                        return false;
+                    } else {
+                        showSwal('Falta fecha', 'Debe seleccionar una fecha de inducción.', 'error');
+                    }
+                }
+
                 function submitFormEditar() {
                     $('#btn_submit_e').attr("disabled", true);
                     $("#spinner_e").show();
@@ -386,6 +411,7 @@ $consulta = new sivisae_consultas();
                             &nbsp;
                         </h2>
                     </div>
+                    <div id="texto"></div>
                 </div>
 
             </main>
