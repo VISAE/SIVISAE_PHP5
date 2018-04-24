@@ -5241,7 +5241,6 @@ class sivisae_consultas extends Bd {
     }
 
     function cantHorariosInducciones($periodo, $zona, $cead, $escuela, $programa) {
-
         $sql = "SELECT count(*) as conteo FROM (
                     SELECT `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, `fecha_hora_fin`, 
                     IFNULL(`salon`, 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion`, `estado_estado_id`
@@ -5369,7 +5368,7 @@ class sivisae_consultas extends Bd {
         //Se actualiza el horario
         $sql = "UPDATE `sivisae`.`induccion_horarios` 
                 SET `salon`='$salon', `fecha_hora_inicio`='$fecha_hora_inicio', `fecha_hora_fin`='$fecha_hora_fin', `cupos`='$cupos', `tipo_induccion`='$tipo_induccion'
-                WHERE `id_induccion_horario`='$horario';";
+                WHERE `induccion_horario_id`='$horario';";
         mysql_query($sql);
         if (mysql_affected_rows() > 0) {
             $rta = "<span style='color: green; font-weight: bold;'>Se actualizó la informacion del horario correctamente.</span>";
@@ -5381,7 +5380,7 @@ class sivisae_consultas extends Bd {
 
     function eliminarHorario($id_upd) {
         //eliminar el Horario
-        $sql2 = "update `sivisae`.`induccion_horarios` set `estado_estado_id`=3 where `id_induccion_horario`=$id_upd";
+        $sql2 = "update `sivisae`.`induccion_horarios` set `estado_estado_id`=3 where `induccion_horario_id`=$id_upd";
         mysql_query($sql2);
         $banAct = mysql_affected_rows();
         if ($banAct > 0) {
@@ -5392,13 +5391,14 @@ class sivisae_consultas extends Bd {
         return $rta;
     }
 
-    function verificarHorariosInducciónEstudiante($estudiante_id, $periodo_academico_id) {
+    function verificarHorariosInducciónEstudiante($estudiante_id, $periodo_academico_id, $induccion) {
         $sql = "SELECT ih.`fecha_hora_inicio`, ih.`fecha_hora_fin`, ih.`salon`, ihe.`induccion_horario_estudiante_id`
                 FROM `sivisae`.`induccion_horario_estudiante` AS ihe 
                 INNER JOIN `sivisae`.`induccion_horarios` AS ih ON ihe.`induccion_horarios_induccion_horario_id` = ih.`induccion_horario_id`
                 INNER JOIN `sivisae`.`matricula` AS m ON ihe.`estudiante_estudiante_id` = m.`estudiante_estudiante_id`
-                WHERE ihe.`estudiante_estudiante_id` = $estudiante_id
-                AND m.`periodo_academico_periodo_academico_id` = $periodo_academico_id ";
+                WHERE ihe.`estudiante_estudiante_id` = $estudiante_id 
+                AND m.`periodo_academico_periodo_academico_id` = $periodo_academico_id 
+                AND ih.`tipo_induccion` = $induccion ";
         $rta = mysql_query($sql);
         return $rta;
     }
@@ -5412,6 +5412,7 @@ class sivisae_consultas extends Bd {
                 AND `zona_id` = $zona 
                 AND `programa_id` = $programa 
                 AND `tipo_induccion_id` = $induccion 
+                AND `cupos` > 0 
                 ORDER BY `salon` ASC ";
 
         $res = mysql_query($sql);
@@ -5423,18 +5424,19 @@ class sivisae_consultas extends Bd {
         $sql = "INSERT INTO `sivisae`.`induccion_horario_estudiante` (`induccion_horarios_induccion_horario_id`, `estudiante_estudiante_id`)
                 VALUES ('$horario_id', '$estudiante_id'); ";
         $res = mysql_query($sql);
-        return $res;
-    }
-
-    function actualizarHorarioInduccionEstudiante($horario_estudiante_id, $horario_id) {
-        $sql = "UPDATE `sivisae`.`induccion_horario_estudiante` 
-                SET `induccion_horarios_induccion_horario_id` = $horario_id
-                WHERE `induccion_horario_estudiante_id` = $horario_estudiante_id ";
+        $sql = "UPDATE `sivisae`.`induccion_horarios` 
+                SET `cupos`=`cupos`-1, `inscritos`=`inscritos`+1 
+                WHERE `induccion_horario_id` = $horario_id ";
         $res = mysql_query($sql);
         return $res;
     }
 
     function eliminarHorarioInduccionEstudiante($horario_estudiante_id) {
+        $sql = "UPDATE `sivisae`.`induccion_horarios` 
+                SET `cupos`=`cupos`+1, `inscritos`=`inscritos`-1 
+                WHERE `induccion_horario_id` = (SELECT `induccion_horarios_induccion_horario_id` 
+                FROM `sivisae`.`induccion_horario_estudiante` WHERE `induccion_horario_estudiante_id` = $horario_estudiante_id)";
+        $res = mysql_query($sql);
         $sql = "DELETE FROM `sivisae`.`induccion_horario_estudiante` 
                 WHERE `induccion_horario_estudiante_id` = $horario_estudiante_id ";
         $res = mysql_query($sql);

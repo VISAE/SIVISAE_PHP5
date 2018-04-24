@@ -63,7 +63,7 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
         </td>    
     </tr>
     ";
-        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id']);
+        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], ($tipoInduccion === 'Virtual'?2:1));
         $muestraHorarios = false;
         if ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
             $fecha = date('j/n/Y', strtotime($vRow['fecha_hora_inicio']));
@@ -71,12 +71,12 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
             $horaFin = date('h:i A', strtotime($vRow['fecha_hora_fin']));
             $dataText .= "
                 <tr>
-                    <td>
-                        <table>
-                            <thead><th>Fecha</th><th>Hora de Inicio</th><th>Hora de Finalización</th><th>Salón</th><th colspan='2'>ACCIONES (Doble click)</th></thead>
+                    <td colspan='2' align='center'>
+                        <table border='1'>
+                            <thead><tr><th title='Dia/Mes/Año'>Fecha</th><th>Hora Inicial</th><th>Hora Final</th><th>Salón</th><th title='Doble click'>Eliminar</th></tr></thead>
                             <tbody>
-                                <tr>
-                                    <td>
+                                <tr align='center'>
+                                    <td title='Dia/Mes/Año'>
                                         $fecha
                                         <input type='hidden' name='induccion_horario_estudiante_id' value='$vRow[induccion_horario_estudiante_id]' />
                                     </td>
@@ -89,11 +89,8 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                                     <td>
                                         $vRow[salon]
                                     </td>
-                                    <td> 
-                                        <button title='Editar Horario' $_SESSION[opc_ed] name='boton_editar' id='boton_editar' onclick='HorarioCRUD(2);'></button>
-                                    </td>
                                     <td>
-                                        <button title='Eliminar Horario' $_SESSION[opc_el] name='boton_eliminar' id='boton_eliminar' onclick='HorarioCRUD(3);'></button>
+                                        <button title='Eliminar Horario' $_SESSION[opc_el] name='boton_eliminar' id='boton_eliminar' type='button' onclick='HorarioCRUD(2);'></button>
                                     </td>
                                 </tr>
                             </tbody>        
@@ -110,6 +107,7 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
     $dataText .= "
                 </tbody>
             </table>
+            <div id='msg'></div>
         </div>
     ";
     date_default_timezone_get('America/Bogota');
@@ -162,15 +160,16 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
             $dataText .= "
                         </tbody>      
                     </table>
-                    <input type='hidden' name='crud' id='crud' />
                 </div>
-            </form>
                 ";
         }
-
+    $dataText .= "
+                    <input type='hidden' name='crud' id='crud' >
+                </form>
+                ";
     echo json_encode(array(
         'title' => 'Resultado de la consulta',
-        'text' => "Información de: $row[0]\n$row[1]",
+        'text' => "Información de:\n$row[1]\nDocumento: $row[0]",
         'type' => 'success',
         'value' => $dataText
     ));

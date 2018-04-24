@@ -1,9 +1,4 @@
 <?php
-/*
- * 
- *   @author Andres C Mendez A
- * 
- */
 
 session_start();
 include_once '../config/sivisae_class.php';
@@ -94,14 +89,9 @@ $consulta = new sivisae_consultas();
             <link rel="stylesheet" href="js/sweetalert-master/dist/sweetalert.css">
             <script src="js/Chosen1.4/chosen.jquery.js" type="text/javascript" language="javascript"></script>
             <script src="js/Chosen1.4/chosen.jquery.min.js" type="text/javascript" language="javascript"></script>
-            <!--<link rel="stylesheet" href="js/Steps/css/normalize.css">
-            <link rel="stylesheet" href="js/Steps/css/main.css">
-            <link rel="stylesheet" href="js/Steps/css/jquery.steps.css">
-            <script src="js/Steps/jquery.steps.js"></script>
-            <link href="js/iCheck/polaris/polaris.css" rel="stylesheet">
-            <script src="js/iCheck/icheck.js"></script>-->
             <script src="js/introLoader/jquery.introLoader.js" type="text/javascript" language="javascript"></script>
             <script src="js/introLoader/spin.min.js" type="text/javascript" language="javascript"></script>
+            <link rel="stylesheet" type="text/css" href="template/css/mensajes.css">
 
             <!--scripts de funcionalidad - inicio-->
             <script >
@@ -159,6 +149,7 @@ $consulta = new sivisae_consultas();
 
 
                 function verificaDocumento() {
+                    $("#texto").hide();
                     if ($('#documento_b').val() !== '') {
                         if($("input[name='tipo_induccion']:checked").val()) {
                             var form = document.formLogin;
@@ -220,25 +211,52 @@ $consulta = new sivisae_consultas();
                 // agregar
 
                 function HorarioCRUD(operacion) {
-                    if($('input:radio[name="horario"]').is(":checked")) {
-                        $('#crud').val(operacion);
-                        //console.log($('input:radio[name="horario"]:checked').val());
-                        var form = document.forms.formHorarios;
-                        var dataString = $(form).serialize();
-                        console.log(dataString);
-                        $.ajax({
-                            type: 'POST',
-                            url: 'src/CRUD_Induccion_Horario_estudiante.php',
-                            data: dataString,
-                            success: function (data) {
-                                data = JSON.parse(data);
-                                $('#formHorarios')[0].reset();
-                                showSwal(data.title, data.text, data.type);
-                            }
-                        });
-                        return false;
-                    } else {
-                        showSwal('Falta fecha', 'Debe seleccionar una fecha de inducción.', 'error');
+                    switch (operacion) {
+                        case 1:
+                            if ($('input:radio[name="horario"]').is(":checked"))
+                                ejecutaOperacion(operacion);
+                            else
+                                showSwal('Falta fecha', 'Debe seleccionar una fecha de inducción.', 'error');
+                            break;
+                        default:
+                            ejecutaOperacion(operacion);
+                            break;
+                    }
+                }
+
+                function ejecutaOperacion(operacion) {
+                    $('#crud').val(operacion);
+                    $('#texto').empty();
+                    //console.log($('input:radio[name="horario"]:checked').val());
+                    var form = document.forms.formHorarios;
+                    var dataString = $(form).serialize();
+                    $.ajax({
+                        type: 'POST',
+                        url: 'src/CRUD_Induccion_Horario_estudiante.php',
+                        data: dataString,
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            verificaDocumento();
+                            muestraAlertas(data.tipo, data.titulo, data.mensaje);
+                        }
+                    });
+                    return false;
+                }
+
+                function muestraAlertas(tipo, titulo, mensaje) {
+                    var htmlMsg = "<div class='"+ tipo +"'><span class='closebtn'>&times;</span><strong>"+titulo+"</strong> "+mensaje+"</div>";
+                    $("#texto").show( "slow");
+                    $('#texto').empty().append(htmlMsg);
+                    // console.log("valor: " + $('#msg').val());
+                    var close = document.getElementsByClassName("closebtn");
+                    var i;
+
+                    for (i = 0; i < close.length; i++) {
+                        close[i].onclick = function(){
+                            var div = this.parentElement;
+                            div.style.opacity = "0";
+                            setTimeout(function(){ div.style.display = "none"; }, 600);
+                        }
                     }
                 }
 
@@ -405,13 +423,7 @@ $consulta = new sivisae_consultas();
                             </div>
                         </div>
                     </div>
-                    <br/>
-                    <div align="center" style="background-color: #004669">
-                        <h2 id='p_fieldset_autenticacion_2'>
-                            &nbsp;
-                        </h2>
-                    </div>
-                    <div id="texto"></div>
+                    <div id="texto" align="center"></div>
                 </div>
 
             </main>

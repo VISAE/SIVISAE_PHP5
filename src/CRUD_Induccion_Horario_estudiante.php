@@ -5,24 +5,27 @@ $consulta = new sivisae_consultas();
 
 switch ($_POST['crud']) {
     case 1:
-        ejecutar($consulta->agregarHorarioInduccionEstudiante($_POST['id_estudiante'], $_POST['horario']), 'Selección', 'Agregado');
-    break;
-    case 2:
-        ejecutar($consulta->actualizarHorarioInduccionEstudiante($_POST['induccion_horario_estudiante_id'], $_POST['horario']), 'Cambio', 'Actualizado');
+        ejecutar($consulta->agregarHorarioInduccionEstudiante($_POST['id_estudiante'], $_POST['horario']), 'Selección', 'Agregada', 'alert success');
         break;
-    case 3:
-        ejecutar($consulta->eliminarHorarioInduccionEstudiante($_POST['induccion_horario_estudiante_id']), 'Eliminación', 'Eliminado');
+    case 2:
+        ejecutar($consulta->eliminarHorarioInduccionEstudiante($_POST['induccion_horario_estudiante_id']), 'Eliminación', 'Eliminada', 'alert');
         break;
 }
 
 
-function ejecutar($ejecutaOperacion, $titulo, $texto) {
+function ejecutar($ejecutaOperacion, $titulo, $texto, $tipo) {
 
-    //if(mysql_fetch_array($ejecutaOperacion)) {
+    if($ejecutaOperacion || is_resource($ejecutaOperacion)) {
         echo json_encode(array(
-            'title' => "$titulo de horario",
-            'text' => "$texto existosamente",
-            'type' => 'success'
+            'tipo' => $tipo,
+            'titulo' => "$titulo de cita de inducción",
+            'mensaje' => "$texto existosamente"
         ));
-    //}
+    } else {
+        echo json_encode(array(
+            'tipo' => 'alert',
+            'titulo' => "$titulo de cita de inducción",
+            'mensaje' => "Ha fallado la operación"
+        ));
+    }
 }
