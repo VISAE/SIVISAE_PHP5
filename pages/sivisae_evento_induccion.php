@@ -185,23 +185,13 @@ $_SESSION["modulo"] = $_GET["op"];
                     url: 'src/consulta_registroMatriculadosCB.php',
                     type: 'POST',
                     beforeSend: function () {
-                        $("#carg").introLoader({
-                            animation: {
-                                name: 'simpleLoader',
-                                options: {
-                                    stop: false,
-                                    fixed: false,
-                                    exitFx: 'fadeOut',
-                                    ease: "linear",
-                                    style: 'light',
-                                    delayBefore: 250,
-                                }
-                            }
-                        });
+                        $('#datosEstudiante').hide();
+                        startLoad();
                     },
                     success: function (response) {
                         var loader = $('#carg').data('introLoader');
-                        loader.stop();
+                        // loader.stop();
+                        stopLoad();
                         response = JSON.parse(response);
                         swal({
                             title: response.titleSwal,
@@ -212,8 +202,8 @@ $_SESSION["modulo"] = $_GET["op"];
                         });
                         $("#result").show();
                         $("#result").html(response.response);
-                        document.getElementById("cedula").readOnly = true;
-                        $('#periodo').prop('disabled', true).trigger("chosen:updated");
+                        /*document.getElementById("cedula").readOnly = true;
+                        $('#periodo').prop('disabled', true).trigger("chosen:updated");*/
                     }
                 });
                 return false;
@@ -399,8 +389,8 @@ $_SESSION["modulo"] = $_GET["op"];
                                         <input style="width: 180px;" id="cedula" name="cedula" type="text" maxlength="15" tabindex="1"/></td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3">
-                                        <p><input class="submit_fieldset_autenticacion" type="submit" value="Ingresar"/></p>
+                                    <td colspan="3" align="center">
+                                        <p><input class="botones" type="submit" value="Ingresar"/></p>
                                     </td>
                                 </tr>
                             </table>

@@ -26,12 +26,11 @@
                                             Zona:
                                             Cead:
                                             Escuela:
-                                            Programa:
                                         </label>
                                         <input type="hidden" name="periodo" id="hiddenPeriodo" />
                                         <input type="hidden" name="zona" id="hiddenZona" />
                                         <input type="hidden" name="cead" id="hiddenCead" />
-                                        <input type="hidden" name="programa" id="hiddenPrograma" />
+                                        <input type="hidden" name="escuela" id="hiddenEscuela" />
                                     </td>
                                 </tr>
                                 <tr>

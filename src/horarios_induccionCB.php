@@ -130,7 +130,7 @@ if (count($inducciones) <= 0) {
 }
 
 // validación para mostrar popup agregar horario
-if($zona !== "T" && $cead !== "T" && $programa !== "T") {
+if($zona !== "T" && $cead !== "T" && $escuela !== "T") {
     date_default_timezone_get('America/Bogota');
     $fecha = date('Y/m/d', time());
     $validaFecha = $consulta->verificarFechasInduccion($fecha, $periodo);
@@ -140,7 +140,7 @@ if($zona !== "T" && $cead !== "T" && $programa !== "T") {
                 $("#hiddenPeriodo").val("'.$periodo.'");
                 $("#hiddenZona").val("'.$zona.'");
                 $("#hiddenCead").val("'.$cead.'");
-                $("#hiddenPrograma").val("'.$programa.'");
+                $("#hiddenEscuela").val("'.$escuela.'");
                 $("#fecha_hora_inicio").val("'.$row[2].'T12:00");
                 $("#fecha_hora_fin").val("'.$row[2].'T12:00");
               </script>';

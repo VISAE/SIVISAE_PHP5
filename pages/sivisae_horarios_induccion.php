@@ -176,9 +176,8 @@ $consulta = new sivisae_consultas();
                 $('#datosGenerales').html(
                     "<strong>Periodo:</strong> "+$('#periodo option:selected').text()+"<br/>" +
                     "<strong>Zona:</strong> "+$('#zona option:selected').text()+"<br/>" +
-                    "<strong>Cead:</strong> "+$('#cead option:selected').text()+"<br/>" +
-                    "<strong>Escuela:</strong> "+$('#escuela option:selected').text()+"<br/>" +
-                    "<strong>Programa:</strong> "+$('#programa option:selected').text()
+                    "<strong>Cead:</strong> "+selectListText('cead')+"<br/>" +
+                    "<strong>Escuela:</strong> "+selectListText('escuela')
                 );
                 var fIni = $('#fecha_hora_inicio').val();
                 var fFin = $('#fecha_hora_fin').val();
@@ -194,6 +193,12 @@ $consulta = new sivisae_consultas();
                 });
                 $("#tipo_induccion").chosen();
             });
+        }
+
+        function selectListText(id) {
+            return $('#'+id+' option:selected').map(function() { var txt = $(this).text();
+                return txt.indexOf("Select") === -1 ? " " + txt : "";
+                }).get().toString();
         }
 
         function activarpopupeditar(id) {

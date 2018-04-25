@@ -5342,6 +5342,11 @@ class sivisae_consultas extends Bd {
     }
 
     function verificarFechasInduccion($fecha, $periodo) {
+        // Validación correcta:
+        /*$SQL = "SELECT `periodo_academico_id`,`descripcion`,`fecha_inicio`, `fecha_fin`
+                FROM `sivisae`.`periodo_academico`
+                WHERE `periodo_academico_id` = $periodo
+                AND '".$fecha."' BETWEEN DATE_SUB(`fecha_inicio`, INTERVAL 30 DAY) AND DATE_ADD(`fecha_inicio`, INTERVAL 15 DAY) ";*/
         $sql = "SELECT `periodo_academico_id`,`descripcion`,`fecha_inicio`, `fecha_fin` 
                 FROM `sivisae`.`periodo_academico` 
                 WHERE `periodo_academico_id` = $periodo 
@@ -5355,11 +5360,14 @@ class sivisae_consultas extends Bd {
         return $this->consultaPrograma($programa);
     }
 
-    function agregaHorarioInduccion($periodo, $zona, $cead, $programa, $salon, $fecha_hora_inicio, $fecha_hora_fin, $cupos, $tipo_induccion) {
+    function agregaHorarioInduccion($zona, $cead, $escuela, $periodo, $salon, $fecha_hora_inicio, $fecha_hora_fin, $cupos, $tipo_induccion) {
         $sql = "INSERT INTO `sivisae`.`induccion_horarios` (`zona_zona_id`, `cead_cead_id`, `programa_programa_id`, 
                             `periodo_academico_periodo_academico_id`, `salon`, `fecha_hora_inicio`, `fecha_hora_fin`, 
-                            `cupos`, `inscritos`, `tipo_induccion`, `estado_estado_id`)
-                VALUES ('$periodo', '$zona', '$cead', '$programa', '$salon', '$fecha_hora_inicio', '$fecha_hora_fin', '$cupos', '0', '$tipo_induccion', '1'); ";
+                            `cupos`, `inscritos`, `tipo_induccion`, `estado_estado_id`)               
+                SELECT '$zona', c.`cead_id`, p.`programa_id`, '$periodo', '$salon', '$fecha_hora_inicio', '$fecha_hora_fin', '$cupos', '0', '$tipo_induccion', '1'
+                FROM `sivisae`.`cead` AS c, (SELECT `programa_id`, `escuela` FROM `sivisae`.`programa` WHERE `estado_estado_id`=1) AS p
+                WHERE p.`escuela` IN ('$escuela')
+                AND c.`cead_id` IN ($cead) ";
         $res = mysql_query($sql);
         return mysql_insert_id();
     }
