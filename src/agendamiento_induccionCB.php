@@ -10,14 +10,52 @@ include_once '../config/sivisae_class.php';
 $consulta = new sivisae_consultas();
 
 $documento = $_POST['documento_b'];
-$tipoInduccion = $_POST['tipo_induccion'];
+$tipoInduccion = null;
+$induccion = array('titulo' => '', 'valor' => 1);
+$actionTitle = '';
+$action = '';
+$modulo = $_POST["op"];
+
+function validaTipoInduccion($tipoInduccion) {
+    if($tipoInduccion === 'Virtual') {
+        return array(
+            'titulo' => ' - Inmersión a Campus',
+            'valor' => 2
+        );
+    }
+
+    return array(
+        'titulo' => ' - Inducción General',
+        'valor' => 1
+    );
+}
+
+
+if ($modulo != "") {
+    $copy = 0;
+    $edit = 0;
+    $delete = 0;
+    $permisos = $consulta->permisos($modulo, $_SESSION["perfilid"]);
+    while ($row = mysql_fetch_array($permisos)) {
+        $copy = $row[0];
+        $edit = $row[1];
+        $delete = $row[2];
+    }
+} else {
+    $copy = 0;
+    $edit = 0;
+    $delete = 0;
+}
+
+if($copy && $edit && $delete) {
+    $tipoInduccion = $_POST['tipo_induccion'];
+    $actionTitle = "<th title='Doble click'>Eliminar</th>";
+    $action = "<td><button title='Eliminar Horario' $_SESSION[opc_el] name='boton_eliminar' id='boton_eliminar' type='button' onclick='HorarioCRUD(2);'></button></td>";
+    $induccion = validaTipoInduccion($tipoInduccion);
+}
 
 $verificaMatriculado = $consulta->consultarMatriculado($documento);
 if ($row = mysql_fetch_array($verificaMatriculado)) {
-    /*$periodoId = $row['periodo_academico_id'];
-    $zonaId = $row['zona_id'];
-    $ceadId = $row['cead_id'];
-    $programaId = $row['programa_id'];*/
     $dataText = "
     <form method='post' id='formHorarios'>
         <div align='center' style='background-color: #004669'>
@@ -58,12 +96,12 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
     <tr>
         <td colspan='2'>
             <div align='center' style='background-color: #004669'>
-                <h2 id='p_fieldset_autenticacion_2'>Inscripciones Actuales - ".($tipoInduccion === 'Virtual'?'Inmersión a Campus':'Inducción General')."</h2>
+                <h2 id='p_fieldset_autenticacion_2'>Inscripciones Actuales".$induccion['titulo']."</h2>
             </div>
         </td>    
     </tr>
     ";
-        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], ($tipoInduccion === 'Virtual'?2:1));
+        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], $induccion['valor']);
         $muestraHorarios = false;
         if ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
             $fecha = date('j/n/Y', strtotime($vRow['fecha_hora_inicio']));
@@ -72,8 +110,8 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
             $dataText .= "
                 <tr>
                     <td colspan='2' align='center'>
-                        <table border='1'>
-                            <thead><tr><th title='Dia/Mes/Año'>Fecha</th><th>Hora Inicial</th><th>Hora Final</th><th>Salón</th><th title='Doble click'>Eliminar</th></tr></thead>
+                        <table border='1' id='tablaHorariosEstudiantes'>
+                            <thead><tr><th title='Dia/Mes/Año'>Fecha</th><th>Hora Inicial</th><th>Hora Final</th><th>Salón</th>$actionTitle</tr></thead>
                             <tbody>
                                 <tr align='center'>
                                     <td title='Dia/Mes/Año'>
@@ -89,15 +127,19 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                                     <td>
                                         $vRow[salon]
                                     </td>
-                                    <td>
-                                        <button title='Eliminar Horario' $_SESSION[opc_el] name='boton_eliminar' id='boton_eliminar' type='button' onclick='HorarioCRUD(2);'></button>
-                                    </td>
+                                    $action
                                 </tr>
                             </tbody>        
                         </table>    
                     </td>            
                 </tr>
             ";
+            // si el estudiante ha obtenido baja calificación en la evaluación de inducción
+            $consultaAsistencia = $consulta->consultaInduccionEstudiante($row['estudiante_id'], $row['periodo_academico_id'], 2);
+            if($rowCA = mysql_fetch_array($consultaAsistencia)) {
+                $muestraHorarios = true;
+                $induccion = validaTipoInduccion('Virtual');
+            }
         } else {
             $dataText .= "
             <tr><td colspan='2' align='center'>No se encontraron registros</td></tr>
@@ -117,7 +159,7 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
             $dataText .= "
                 <div id='HorariosInduccion'>
                     <div align='center' style='background-color: #004669'>
-                        <h2 id='p_fieldset_autenticacion_2'>Horarios de Inducción - ".($tipoInduccion === 'Virtual'?'Inmersión a Campus':'Inducción General')."</h2>
+                        <h2 id='p_fieldset_autenticacion_2'>Horarios de Inducción".$induccion['titulo']."</h2>
                     </div>
                     <table border='1'>
                         <thead>
@@ -133,7 +175,7 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                         </thead>
                         <tbody> 
                         ";
-            $consultaHorarios = $consulta->HorariosInduccionesAgendamiento($row['periodo_academico_id'], $row['zona_id'], $row['cead_id'], $row['programa_id'], ($tipoInduccion === 'Virtual'?2:1));
+            $consultaHorarios = $consulta->HorariosInduccionesAgendamiento($row['periodo_academico_id'], $row['zona_id'], $row['cead_id'], $row['programa_id'], $induccion['valor']);
             if(mysql_num_rows($consultaHorarios)) {
                 while ($horarios = mysql_fetch_array($consultaHorarios)) {
                     $fecha = date('j/n/Y', strtotime($horarios['fecha_hora_inicio']));

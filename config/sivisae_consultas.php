@@ -5399,29 +5399,32 @@ class sivisae_consultas extends Bd {
         return $rta;
     }
 
-    function verificarHorariosInducciónEstudiante($estudiante_id, $periodo_academico_id, $induccion) {
+    function verificarHorariosInducciónEstudiante($estudiante_id, $periodo_academico_id, $induccion = null) {
         $sql = "SELECT ih.`fecha_hora_inicio`, ih.`fecha_hora_fin`, ih.`salon`, ihe.`induccion_horario_estudiante_id`
                 FROM `sivisae`.`induccion_horario_estudiante` AS ihe 
                 INNER JOIN `sivisae`.`induccion_horarios` AS ih ON ihe.`induccion_horarios_induccion_horario_id` = ih.`induccion_horario_id`
                 INNER JOIN `sivisae`.`matricula` AS m ON ihe.`estudiante_estudiante_id` = m.`estudiante_estudiante_id`
                 WHERE ihe.`estudiante_estudiante_id` = $estudiante_id 
-                AND m.`periodo_academico_periodo_academico_id` = $periodo_academico_id 
-                AND ih.`tipo_induccion` = $induccion ";
+                AND m.`periodo_academico_periodo_academico_id` = $periodo_academico_id ";
+        if($induccion)
+                $sql .= " AND ih.`tipo_induccion` = $induccion ";
         $rta = mysql_query($sql);
         return $rta;
     }
 
-    function HorariosInduccionesAgendamiento($periodo, $zona, $cead, $programa, $induccion) {
+    function HorariosInduccionesAgendamiento($periodo, $zona, $cead, $programa, $induccion = null) {
         $sql = "SELECT `induccion_horario_id`, `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, 
                     `fecha_hora_fin`, IFNULL(NULLIF(TRIM(`salon`),''), 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion_id`, `tipo_induccion`
                 FROM `vta_induccion_horarios` 
                 WHERE `periodo_academico_id` = $periodo 
                 AND `cead_cead_id` = $cead 
                 AND `zona_id` = $zona 
-                AND `programa_id` = $programa 
-                AND `tipo_induccion_id` = $induccion 
-                AND `cupos` > 0 
-                ORDER BY `salon` ASC ";
+                AND `programa_id` = $programa ";
+        if($induccion) {
+            $sql .= " AND `tipo_induccion_id` = $induccion ";
+        }
+        $sql .= " AND `cupos` > 0 
+                 ORDER BY `salon` ASC ";
 
         $res = mysql_query($sql);
 
@@ -5449,6 +5452,26 @@ class sivisae_consultas extends Bd {
                 WHERE `induccion_horario_estudiante_id` = $horario_estudiante_id ";
         $res = mysql_query($sql);
         return $res;
+    }
+
+    function consultaInduccionEstudiante($estudiante_id, $periodo, $participacion = null)
+    {
+        $sql = "SELECT `induccion_estudiante_id`,`estudiante_id`,`fecha`,`tipo_induccion`,`periodo_academico_id`,`participacion`
+                FROM `sivisae`.`induccion_estudiante` 
+                WHERE `estudiante_id` = $estudiante_id 
+                AND `periodo_academico_id` = $periodo ";
+        if($participacion)
+            $sql .= " AND `participacion` = $participacion ";
+        $sql .= " ORDER BY `fecha` DESC LIMIT 1 ";
+        $res = mysql_query($sql);
+        return $res;
+    }
+
+    function registrarAsistenciaEventoInduccion($estudiante_id, $tipo_induccion, $periodo) {
+        $sql = "INSERT INTO `sivisae`.`induccion_estudiante` (`estudiante_id`, `fecha`, `tipo_induccion`, `periodo_academico_id`, `participacion`)
+                VALUES ('$estudiante_id', NOW(), '$tipo_induccion', '$periodo', 1)";
+        $res = mysql_query($sql);
+        return mysql_insert_id();
     }
 
     // FIN METODOS INDUCCIÓN

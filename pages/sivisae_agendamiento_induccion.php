@@ -151,33 +151,47 @@ $consulta = new sivisae_consultas();
                 function verificaDocumento() {
                     $("#texto").hide();
                     if ($('#documento_b').val() !== '') {
-                        if($("input[name='tipo_induccion']:checked").val()) {
-                            var form = document.formLogin;
-                            var dataString = $(form).serialize();
-                            $("#wrapper").hide();
-                            $.ajax({
-                                type: 'POST',
-                                url: 'src/agendamiento_induccionCB.php',
-                                data: dataString,
-                                beforeSend: function () {
-                                    startLoad();
-                                },
-                                success: function (data) {
-                                    data = JSON.parse(data);
-                                    stopLoad();
-                                    $('#wrapper').html(data.value);
-                                    $("#wrapper").show();
-                                    showSwal(data.title, data.text, data.type);
-                                }
-
-                            });
-                            return false;
+                        if($("#modalidad").length) {
+                            if ($("input[name='tipo_induccion']:checked").val()) {
+                                verificaDocumentoAjax();
+                            } else {
+                                showSwal('Falta información', 'Debe seleccionar la modalidad del proceso de inducción.', 'error');
+                            }
                         } else {
-                            showSwal('Falta información', 'Debe seleccionar la modalidad del proceso de inducción.', 'error');
+                            verificaDocumentoAjax();
                         }
                     } else {
                         showSwal('Falta información', 'Debe ingresar el número de documento.', 'error');
                     }
+                }
+
+                function verificaDocumentoAjax() {
+                    var form = document.formLogin;
+                    var dataString = $(form).serialize();
+                    $("#wrapper").hide();
+                    $.ajax({
+                        type: 'POST',
+                        url: 'src/agendamiento_induccionCB.php',
+                        data: dataString,
+                        beforeSend: function () {
+                            startLoad();
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            stopLoad();
+                            $('#wrapper').html(data.value);
+                            $("#wrapper").show();
+                            showSwal(data.title, data.text, data.type);
+                        }
+                    })
+                        .done(function (data) {
+                            if($("#tablaHorariosEstudiantes").length)
+                                muestraAlertas(
+                                    'alert info',
+                                    'Nota: ',
+                                    'en caso de NO asistir en la fecha programada por favor comuníquese con su centro para reprogramar');
+                        });
+                    return false;
                 }
 
                 function showSwal(title, text, type) {
@@ -402,22 +416,32 @@ $consulta = new sivisae_consultas();
                                         <td align="center"><label>No. Documento *</label><br/><input type="text" name="documento_b" maxlength="20" id="documento_b"/></td>
                                         <td align="center"><input type="button" class="botones" name="buscar" id="buscar" value="Buscar" onclick="verificaDocumento();"/></td>
                                     </tr>
-                                    <tr>
-                                        <td colspan="2" align="center">
-                                            <br><hr>
-                                            <label>Seleccione la modalidad del proceso de inducción</label>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" align="center">
-                                            <br>
-                                            <div>
-                                                <input type="radio" name="tipo_induccion" value="General">Inducción General<br>
-                                                <input type="radio" name="tipo_induccion" value="Virtual">Inmersión a Campus
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <?php
+                                    if($copy && $edit && $delete) {
+                                        ?>
+                                        <tr>
+                                            <td colspan="2" align="center">
+                                                <br>
+                                                <hr>
+                                                <label id="modalidad">Seleccione la modalidad del proceso de inducción</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" align="center">
+                                                <br>
+                                                <div>
+                                                    <input type="radio" name="tipo_induccion" value="General">Inducción
+                                                    General<br>
+                                                    <input type="radio" name="tipo_induccion" value="Virtual">Inmersión
+                                                    a Campus
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                    ?>
                                 </table>
+                                <input type="hidden" name="op" id="op" value="<?php echo $modulo ?>" >
                             </form>
                             <div align="center" id="wrapper">
                             </div>

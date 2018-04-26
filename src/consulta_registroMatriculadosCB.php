@@ -80,8 +80,10 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
         </td>    
     </tr>
     ";
-        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], 1);
-        if ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
+        // el valor de parámetro inducción es nulo para validar todos los eventos de inducción registrados
+        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id']);
+        $encontrado = false;
+        while ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
             $fecha = date('j/n/Y', strtotime($vRow['fecha_hora_inicio']));
             $horaInicio = date('h:i A', strtotime($vRow['fecha_hora_inicio']));
             $horaFin = date('h:i A', strtotime($vRow['fecha_hora_fin']));
@@ -112,27 +114,38 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
                 </tr>
             ";
             $encontrado = true;
+        }
+
+        if($encontrado) {
+            $asisteInduccionEstudiante = $consulta->consultaInduccionEstudiante($row['estudiante_id'], $row['periodo_academico_id']);
+            if ($rowIE = mysql_fetch_array($asisteInduccionEstudiante))
+                $salida = Array('typeSwal' => 'info',
+                    'titleSwal' => 'El estudiante ' . $row['nombre'] . ' ya registró su asistencia',
+                    'response' => $dataText);
+            else {
+                $registrarAsistencia = $consulta->registrarAsistenciaEventoInduccion($row['estudiante_id'], 1, $row['periodo_academico_id']);
+                if($registrarAsistencia)
+                    $salida = Array('typeSwal' => 'success',
+                        'titleSwal' => 'El estudiante ' . $row['nombre'] . ' ha ingresado exitosamente',
+                        'response' => $dataText);
+                else
+                    $salida = Array('typeSwal' => 'error',
+                        'titleSwal' => 'No se ha podido completar el registro',
+                        'response' => $dataText);
+            }
         } else {
             $dataText .= "
-            <tr><td colspan='2' align='center'>No se encontraron registros</td></tr>
+                <tr><td colspan='2' align='center'>No se encontraron registros</td></tr>
             ";
-            $encontrado = false;
+            $salida = Array('typeSwal' => 'warning',
+                'titleSwal' => 'El estudiante ' . $row['nombre'] . ' No registra citas de inducción',
+                'response' => $dataText);
         }
         $dataText .= "
                 </tbody>
             </table>
         </div>
-    ";
-
-        if($encontrado) {
-            $salida = Array('typeSwal' => 'info',
-                'titleSwal' => 'El estudiante ' . $row[1] . ' ha ingresado exitosamente',
-                'response' => $dataText);
-        } else {
-            $salida = Array('typeSwal' => 'warning',
-                'titleSwal' => 'El estudiante ' . $row[1] . ' No registra citas de inducción',
-                'response' => $dataText);
-        }
+        ";
     }
     echo json_encode($salida);
 } else {
