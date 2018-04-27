@@ -5137,7 +5137,8 @@ class sivisae_consultas extends Bd {
 
     function consultaCentro($centro) {
         $sql = "SELECT 
-                c.`cead_id` AS 'cead_id', c.`descripcion` AS 'Centro', c.`zona_zona_id` AS 'zona_id', z.`descripcion` AS 'Zona'  
+                c.`cead_id` AS 'cead_id', c.`descripcion` AS 'Centro', c.`zona_zona_id` AS 'zona_id', z.`descripcion` AS 'Zona',
+                c.`direccion`, c.`telefono`  
                 FROM `sivisae`.`cead` AS c INNER JOIN `sivisae`.`zona` AS z
                 ON c.`zona_zona_id` = z.`zona_id`
                 WHERE c.`estado_estado_id` = 1 ";

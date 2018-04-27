@@ -168,6 +168,7 @@ $consulta = new sivisae_consultas();
                 function verificaDocumentoAjax() {
                     var form = document.formLogin;
                     var dataString = $(form).serialize();
+                    var additional = '';
                     $("#wrapper").hide();
                     $.ajax({
                         type: 'POST',
@@ -181,6 +182,7 @@ $consulta = new sivisae_consultas();
                             stopLoad();
                             $('#wrapper').html(data.value);
                             $("#wrapper").show();
+                            additional = data.additional;
                             showSwal(data.title, data.text, data.type);
                         }
                     })
@@ -189,7 +191,7 @@ $consulta = new sivisae_consultas();
                                 muestraAlertas(
                                     'alert info',
                                     'Nota: ',
-                                    'en caso de NO asistir en la fecha programada por favor comuníquese con su centro para reprogramar');
+                                    'en caso de NO asistir en la fecha programada por favor comuníquese con su centro para reprogramar' + additional);
                         });
                     return false;
                 }

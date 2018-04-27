@@ -209,17 +209,24 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                     <input type='hidden' name='crud' id='crud' >
                 </form>
                 ";
+
+        $consultaCentro = $consulta->consultaCentro($row['cead_id']);
+        if($centro = mysql_fetch_array($consultaCentro))
+            $additional = '<br><strong>Dirección: </strong>'.$centro['direccion'].'<br><strong>Teléfono: </strong>'.$centro['telefono'];
+
     echo json_encode(array(
         'title' => 'Resultado de la consulta',
         'text' => "Información de:\n$row[1]\nDocumento: $row[0]",
         'type' => 'success',
-        'value' => $dataText
+        'value' => $dataText,
+        'additional' => $additional
     ));
 } else {
     echo json_encode(array(
         'title' => 'Falla la consulta',
         'text' => 'No se encontró información de inducción del estudiante',
         'type' => 'error',
-        'value' => ''
+        'value' => '',
+        'additional' => ''
     ));
 }

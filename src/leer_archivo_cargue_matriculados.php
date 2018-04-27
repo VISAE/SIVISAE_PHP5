@@ -102,7 +102,7 @@ if (!isset($_FILES['archivo'])) {
             }
 
 //            echo json_encode($estudiantes, JSON_UNESCAPED_UNICODE);
-            echo "<strong>".$counter." Registros insertados</strong><br>";
+            echo $counter." Registros insertados exitosamente";
         }
     } else {
         echo 'Archivo inválido <br>';

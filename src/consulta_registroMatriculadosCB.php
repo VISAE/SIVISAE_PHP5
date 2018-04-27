@@ -13,26 +13,7 @@ $consulta = new sivisae_consultas();
 if (isset($_POST['documento']) && isset($_POST['periodo'])) {
     $documento = $_POST['documento'];
     $periodo = $_POST['periodo'];
-    $salida = Array('typeSwal'=>'warning',
-        'titleSwal'=>'Registro Inexistente proceda a crearlo',
-        'response'=>"
-                    <script>
-                        $('#datosEstudiante').show();
-                    </script>                    
-                    "
-        /*<form>
-            <div align='center' style='background-color: #004669'>
-                <h2 id='p_fieldset_autenticacion_2'>
-                    Datos personales del Estudiante
-                </h2>
-            </div>
-            <div align='center'>
-                <table>"
-                    .filtroInduccion().
-                "</table>
-            </div>
-        </form>"*/
-    );
+
     $datosEstudiante = $consulta->consultarMatriculado($documento, $periodo);
     if ($row = mysql_fetch_array($datosEstudiante)) {
 
@@ -146,11 +127,27 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
             </table>
         </div>
         ";
+    } else {
+        $salida = Array('typeSwal' => 'error',
+            'titleSwal' => 'Verifique el periodo académico',
+            'response' => "");
+        date_default_timezone_get('America/Bogota');
+        $fecha = date('Y/m/d', time());
+        $consultaFecha = $consulta->verificarFechasInduccion($fecha, $periodo);
+        if ($rowF = mysql_fetch_array($consultaFecha)) {
+            $salida = Array('typeSwal' => 'warning',
+                'titleSwal' => 'Registro Inexistente proceda a crearlo',
+                'response' => "
+                    <script>
+                        $('#datosEstudiante').show();
+                    </script>                    
+                    ");
+        }
     }
     echo json_encode($salida);
 } else {
     echo json_encode(Array('typeSwal'=>'warning',
-        'titleSwal'=>'El documento no aparece registrado en el periodo académico',
-        'response'=>'Error'));
+        'titleSwal'=>'Error',
+        'response'=>'Error: Verifique los campos'));
 }
 ?>

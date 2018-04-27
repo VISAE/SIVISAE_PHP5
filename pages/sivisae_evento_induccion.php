@@ -96,33 +96,21 @@ $_SESSION["modulo"] = $_GET["op"];
 
     ?>
 
-    <!--contenedor-->
     <link rel="stylesheet" type="text/css" href="template/css/estilo_index.css">
     <link rel="stylesheet" type="text/css" href="js/Chosen1.4/chosen.css">
     <link rel="stylesheet" type="text/css" href="js/Chosen1.4/chosen.min.css">
-    <link href="js/iCheck/polaris/polaris.css" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="js/introLoader/css/introLoader.min.css" />
-    <link rel="stylesheet" href="template/popup/style.min.css">
+    <link type="text/css" rel="stylesheet" href="js/qtip/jquery.qtip.css" />
+    <script src="js/sweetalert-master/dist/sweetalert-dev.js" type="text/javascript" languaje="javascript"></script>
+    <link rel="stylesheet" href="js/sweetalert-master/dist/sweetalert.css">
+<!--    <link rel="stylesheet" href="template/popup/style.min.css">-->
     <script src="js/popup/bpopup.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="template/popup/estilo_popup.css">
     <link rel="stylesheet" type="text/css" href="template/grilla/estilo_grilla.css">
-    <script src="js/sweetalert-master/dist/sweetalert-dev.js" type="text/javascript" languaje="javascript"></script>
-    <link rel="stylesheet" href="js/sweetalert-master/dist/sweetalert.css">
-    <link rel="stylesheet" href="js/Contador_TextArea/style.css">
-    <link rel="stylesheet" href="js/knob/css/style.css">
-    <script src="js/iCheck/icheck.js"></script>
-    <script src="js/introLoader/jquery.introLoader.js" type="text/javascript" language="javascript"></script>
-    <script src="js/introLoader/spin.min.js" type="text/javascript" language="javascript"></script>
     <script src="js/Chosen1.4/chosen.jquery.js" type="text/javascript" language="javascript"></script>
     <script src="js/Chosen1.4/chosen.jquery.min.js" type="text/javascript" language="javascript"></script>
-    <script src="js/flipclock/compiled/flipclock.min.js" type="text/javascript" language="javascript"></script>
     <script type="text/javascript" src="js/qtip/jquery.qtip.js"></script>
-    <script src='js/varios/script-registrar-atencion.js' type='text/javascript' language='javascript'></script>
-    <style type="text/css" class="init">
-
-    </style>
-
-
+    <script src="js/introLoader/jquery.introLoader.js" type="text/javascript" language="javascript"></script>
+    <script src="js/introLoader/spin.min.js" type="text/javascript" language="javascript"></script>
 
 
 
@@ -193,17 +181,9 @@ $_SESSION["modulo"] = $_GET["op"];
                         // loader.stop();
                         stopLoad();
                         response = JSON.parse(response);
-                        swal({
-                            title: response.titleSwal,
-                            text: '',
-                            type: response.typeSwal,
-                            confirmButtonColor: '#004669',
-                            confirmButtonText: 'Aceptar'
-                        });
+                        showSwal(response.titleSwal, '', response.typeSwal);
                         $("#result").show();
                         $("#result").html(response.response);
-                        /*document.getElementById("cedula").readOnly = true;
-                        $('#periodo').prop('disabled', true).trigger("chosen:updated");*/
                     }
                 });
                 return false;
@@ -214,13 +194,7 @@ $_SESSION["modulo"] = $_GET["op"];
                     if(camposLlenos[key] == '')
                         str += (str == '')?key:' y '+key;
                 }
-                swal({
-                    title: '¡Debe ingresar '+str+'!',
-                    text: '',
-                    type: 'error',
-                    confirmButtonColor: '#004669',
-                    confirmButtonText: 'Aceptar'
-                });
+                showSwal('¡Debe ingresar '+str+'!','','error');
                 $('#periodo').focus();
                 return false;
             }
@@ -239,6 +213,26 @@ $_SESSION["modulo"] = $_GET["op"];
             if (popup == 3) {
                 $('#popup_eliminar').bPopup().close();
             }
+        }
+
+        function crearEstudiante() {
+            $("#cedula_id").val($("#cedula").val());
+            $("#periodo_id").val($("#periodo").val());
+            var form = document.formEstudiante;
+            var dataString = $(form).serialize();
+            $.ajax({
+                url: 'src/guardar_estudiante_evento.php',
+                type: 'POST',
+                data: dataString,
+                beforeSend: function () {
+                    if(!formcheck())
+                        return false;
+                },
+                success: function (data) {
+
+                }
+            });
+            return false;
         }
 
         function cargarMatriculados() {
@@ -261,13 +255,24 @@ $_SESSION["modulo"] = $_GET["op"];
                 success: function (response) {
                     $('#spinner').hide();
                     $('#datosEstudiante').hide();
-                    $("#result").show();
-                    $("#result").html(response);
+                    $("#result").html('');
                     $('.cerrar').show();
                     CerrarPopup(2);
                 },
+            }).done(function (response) {
+                showSwal('Resultado de la carga', response, 'info');
             });
             return false;
+        }
+
+        function showSwal(title, text, type) {
+            swal({
+                title: title,
+                text: text,
+                type: type,
+                confirmButtonColor: '#004669',
+                confirmButtonText: 'Aceptar'
+            });
         }
 
         function startLoad() {
@@ -298,10 +303,29 @@ $_SESSION["modulo"] = $_GET["op"];
             loader.stop();
         }
 
+        function formcheck() {
+            var fields = $(".item-required")
+                .find("select, input").serializeArray();
+            var empty = false;
+            var str = '';
+            $.each(fields, function(i, field) {
+                if (!field.value) {
+                    str += field.name + ' '
+                    empty = true;
+                }
+            });
+            if(empty) {
+                str = str.trim().replace(/[\[\]']+/g,'').split(' ').join(', ');
+                showSwal('falta por llenar', str, 'warning');
+                return false;
+            }
+            return true;
+        }
+
         function filtros(cual) {
             var dataString = {
                 "select": cual,
-                "valores": $("#" + cual).val()
+                "valores": [$("#" + cual).val()]
             };
             $.ajax({
                 type: 'POST',
@@ -325,6 +349,10 @@ $_SESSION["modulo"] = $_GET["op"];
                     }
                 }
 
+            }).done(function (data) {
+                $(".chosen-select").chosen('destroy');
+                $(".chosen-select").removeAttr('multiple');
+                $(".chosen-select").chosen();
             });
         }
 
@@ -343,6 +371,7 @@ $_SESSION["modulo"] = $_GET["op"];
     <?php include "sivisae_menu.php"; ?>
     <!--Menu - Fin-->
     <main>
+
         <div>
 
             <!--Barra de estado inicio-->
@@ -361,6 +390,7 @@ $_SESSION["modulo"] = $_GET["op"];
             </div>
 
             <div class="art-postcontent">
+                <div id="dynElement"></div>
                 <div align="center">
                     <form id="consultar_documento" name="consultar_documento" method="post" onsubmit="return submitConsultarDocumento()" action="#">
                         <div style="background-color: #ffffff;">
@@ -464,16 +494,16 @@ $_SESSION["modulo"] = $_GET["op"];
                             </div>
                         </div>
                     </div>
+                    <div id="carg" align="center"></div>
+                    <div align="center" id="result"></div>
+                    <div align="center" id="datosEstudiante">
+                        <?php
+                        include "sivisae_formulario_estudiante_induccion.php";
+                        ?>
+                    </div>
                 </div>
-                <div id="carg" align="center"></div>
             </div>
-            <div id="dynElement"></div>
-            <div align="center" id="result"></div>
-            <div align="center" id="datosEstudiante">
-                <?php
-                include "sivisae_formulario_estudiante_induccion.php";
-                ?>
-            </div>
+
         </div>
 
     </main>
@@ -482,6 +512,7 @@ $_SESSION["modulo"] = $_GET["op"];
     //Pie de pagina
     include "../template/sivisae_footer_home.php";
     ?>
+
     </body>
 <?php
 }

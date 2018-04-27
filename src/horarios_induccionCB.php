@@ -136,6 +136,7 @@ if($zona !== "T" && $cead !== "T" && $escuela !== "T") {
     $validaFecha = $consulta->verificarFechasInduccion($fecha, $periodo);
     if($row = mysql_fetch_array($validaFecha)) {
         echo '<script>
+                console.log("'.$fecha.'");
                 $("#boton_crear").show();
                 $("#hiddenPeriodo").val("'.$periodo.'");
                 $("#hiddenZona").val("'.$zona.'");
@@ -146,6 +147,7 @@ if($zona !== "T" && $cead !== "T" && $escuela !== "T") {
               </script>';
     } else {
         echo '<script>
+                console.log("'.$fecha.'");
                 $("#boton_crear").hide();
               </script>';
     }
