@@ -5351,7 +5351,7 @@ class sivisae_consultas extends Bd {
         $sql = "SELECT `periodo_academico_id`,`descripcion`,`fecha_inicio`, `fecha_fin` 
                 FROM `sivisae`.`periodo_academico` 
                 WHERE `periodo_academico_id` = $periodo 
-                AND '".$fecha."' BETWEEN `fecha_inicio` AND `fecha_fin` ";
+                AND '".$fecha."' < DATE_SUB(`fecha_inicio`, INTERVAL 15 DAY) ";
         $res = mysql_query($sql);
         return $res;
     }
@@ -5413,14 +5413,16 @@ class sivisae_consultas extends Bd {
         return $rta;
     }
 
-    function HorariosInduccionesAgendamiento($periodo, $zona, $cead, $programa, $induccion = null) {
+    function HorariosInduccionesAgendamiento($periodo, $zona, $cead, $programa = null, $induccion = null) {
         $sql = "SELECT `induccion_horario_id`, `zona`, `cead`, `programa`, `escuela`, `periodo_academico`, `fecha_hora_inicio`, 
                     `fecha_hora_fin`, IFNULL(NULLIF(TRIM(`salon`),''), 'Virtual') `salon`, `cupos`, `inscritos`, `tipo_induccion_id`, `tipo_induccion`
                 FROM `vta_induccion_horarios` 
                 WHERE `periodo_academico_id` = $periodo 
                 AND `cead_cead_id` = $cead 
-                AND `zona_id` = $zona 
-                AND `programa_id` = $programa ";
+                AND `zona_id` = $zona ";
+        if($programa) {
+            $sql .= " AND `programa_id` = $programa ";
+        }
         if($induccion) {
             $sql .= " AND `tipo_induccion_id` = $induccion ";
         }

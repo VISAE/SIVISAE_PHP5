@@ -1,4 +1,4 @@
-<form method="post" id="formEstudiante" target="src/guardar_estudiante_evento.php">
+<form method="post" id="formEstudiante" name="formEstudiante" target="src/guardar_estudiante_eventoCB.php">
     <div align='center' style='background-color: #004669'>
         <h2 id='p_fieldset_autenticacion_2'>
             Datos personales del Estudiante
@@ -7,10 +7,9 @@
     <input type="hidden" id="cedula_id" name="cedula_id">
     <input type="hidden" id="periodo_id" name="periodo_id">
     <div align='center'>
-        <div class="item-required">
             <table>
                 <tr>
-                    <td class="sel_zona">
+                    <td class="sel_zona item-required">
                         Zona:
                         <select id="zona" name="zona[]" data-placeholder="Seleccione una Zona" class="chosen-select"
                                 style="width:180px;" tabindex="4">
@@ -24,7 +23,7 @@
                             ?>
                         </select>
                     </td>
-                    <td class="f sel_zona">
+                    <td class="f sel_zona item-required">
                         <div id="div-zona">
                             CEAD:
                             <select id="cead" name="cead[]" data-placeholder="Seleccione un CEAD" class="chosen-select"
@@ -54,7 +53,7 @@
                             ?>
                         </select>
                     </td>
-                    <td class="e">
+                    <td class="e item-required">
                         Programa:
                         <select id="programa" name="programa[]" data-placeholder="Seleccione un Programa"
                                 class="chosen-select" style="width:180px;" tabindex="4" required>
@@ -81,7 +80,7 @@
                                 <td>
                                     <label for="nombre">* Nombre(s):</label>
                                 </td>
-                                <td colspan="2">
+                                <td colspan="2" class="item-required">
                                     <input style="width: 300px;" id="nombre" name="nombre" class="form-control"
                                            type="text"
                                            maxlength="30" tabindex="5" placeholder="Nombre aqui" required/>
@@ -91,7 +90,7 @@
                                 <td>
                                     <label for="apellido">* Apellido(s):</label>
                                 </td>
-                                <td colspan="2">
+                                <td colspan="2" class="item-required">
                                     <input style="width: 300px;" id="apellido" name="apellido" class="form-control"
                                            type="text"
                                            maxlength="30" tabindex="6" placeholder="Apellido aqui" required/>
@@ -101,7 +100,7 @@
                                 <td>
                                     <label for="email">* Email personal:</label>
                                 </td>
-                                <td colspan="2">
+                                <td colspan="2" class="item-required">
                                     <input style="width: 300px;" id="email" name="email" class="form-control"
                                            type="email"
                                            maxlength="30" tabindex="7" placeholder="nombre@correo.com" required/>
@@ -111,7 +110,7 @@
                                 <td>
                                     <label for="telefono">* Teléfono:</label>
                                 </td>
-                                <td colspan="2">
+                                <td colspan="2" class="item-required">
                                     <input style="width: 300px;" id="telefono" name="telefono" class="form-control"
                                            type="tel"
                                            maxlength="30" tabindex="8" placeholder="Teléfono aqui" required/>
@@ -134,8 +133,8 @@
                                 </td>
                                 <td>
                                     <div id="tipoDiv">
-                                        <input type="radio" id="tipo" name="tipo_estudiante" value="H" checked>Nuevo
-                                        <input type="radio" id="tipo" name="tipo_estudiante" value="G">Antiguo
+                                        <input type="radio" id="tipo" name="tipo_estudiante" value="G" checked>Nuevo
+                                        <input type="radio" id="tipo" name="tipo_estudiante" value="H">Antiguo
                                     </div>
                                 </td>
                             </tr>
@@ -143,7 +142,6 @@
                     </td>
                 </tr>
             </table>
-        </div>
         <br>
         <input class="botones" type="submit" onclick="return crearEstudiante();" value="Guardar">
     </div>

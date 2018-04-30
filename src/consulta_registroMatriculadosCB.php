@@ -108,7 +108,11 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
                 if($registrarAsistencia)
                     $salida = Array('typeSwal' => 'success',
                         'titleSwal' => 'El estudiante ' . $row['nombre'] . ' ha ingresado exitosamente',
-                        'response' => $dataText);
+                        'response' => $dataText,
+                        'alert' => Array(
+                            'type' => 'alert success',
+                            'title' => 'Ingreso: ',
+                            'text' => 'Satisfactorio'));
                 else
                     $salida = Array('typeSwal' => 'error',
                         'titleSwal' => 'No se ha podido completar el registro',

@@ -97,18 +97,16 @@ $_SESSION["modulo"] = $_GET["op"];
     ?>
 
     <link rel="stylesheet" type="text/css" href="template/css/estilo_index.css">
-    <link rel="stylesheet" type="text/css" href="js/Chosen1.4/chosen.css">
     <link rel="stylesheet" type="text/css" href="js/Chosen1.4/chosen.min.css">
     <link type="text/css" rel="stylesheet" href="js/qtip/jquery.qtip.css" />
     <script src="js/sweetalert-master/dist/sweetalert-dev.js" type="text/javascript" languaje="javascript"></script>
     <link rel="stylesheet" href="js/sweetalert-master/dist/sweetalert.css">
-<!--    <link rel="stylesheet" href="template/popup/style.min.css">-->
     <script src="js/popup/bpopup.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="template/popup/estilo_popup.css">
     <link rel="stylesheet" type="text/css" href="template/grilla/estilo_grilla.css">
-    <script src="js/Chosen1.4/chosen.jquery.js" type="text/javascript" language="javascript"></script>
+    <link rel="stylesheet" type="text/css" href="template/css/mensajes.css">
     <script src="js/Chosen1.4/chosen.jquery.min.js" type="text/javascript" language="javascript"></script>
-    <script type="text/javascript" src="js/qtip/jquery.qtip.js"></script>
+<!--    <script type="text/javascript" src="js/qtip/jquery.qtip.js"></script>-->
     <script src="js/introLoader/jquery.introLoader.js" type="text/javascript" language="javascript"></script>
     <script src="js/introLoader/spin.min.js" type="text/javascript" language="javascript"></script>
 
@@ -162,6 +160,8 @@ $_SESSION["modulo"] = $_GET["op"];
 
         function submitConsultarDocumento() {
             var camposLlenos = {'Periodo':$('#periodo').val(), 'Cédula':$('#cedula').val()};
+            var alerta = undefined;
+            $("#carg").empty().append('');
             if (camposLlenos.Periodo !== '' && camposLlenos.Cédula !== '') {
 
                 var parametros = {
@@ -184,7 +184,12 @@ $_SESSION["modulo"] = $_GET["op"];
                         showSwal(response.titleSwal, '', response.typeSwal);
                         $("#result").show();
                         $("#result").html(response.response);
+                        if(response.alert)
+                            alerta = response.alert;
                     }
+                }).done(function () {
+                    if(alerta)
+                        muestraAlertas(alerta.type, alerta.title, alerta.text);
                 });
                 return false;
 
@@ -221,15 +226,21 @@ $_SESSION["modulo"] = $_GET["op"];
             var form = document.formEstudiante;
             var dataString = $(form).serialize();
             $.ajax({
-                url: 'src/guardar_estudiante_evento.php',
+                url: 'src/guardar_estudiante_eventoCB.php',
                 type: 'POST',
                 data: dataString,
                 beforeSend: function () {
                     if(!formcheck())
                         return false;
+                    else
+                        startLoad();
                 },
                 success: function (data) {
-
+                    data = JSON.parse(data);
+                    stopLoad();
+                    $("#formEstudiante")[0].reset();
+                    $("#datosEstudiante").hide("slow");
+                    showSwal(data.title, data.text, data.type);
                 }
             });
             return false;
@@ -273,6 +284,23 @@ $_SESSION["modulo"] = $_GET["op"];
                 confirmButtonColor: '#004669',
                 confirmButtonText: 'Aceptar'
             });
+        }
+
+        function muestraAlertas(tipo, titulo, mensaje) {
+            var htmlMsg = "<div class='"+ tipo +"'><span class='closebtn'>&times;</span><strong>"+titulo+"</strong> "+mensaje+"</div>";
+            $("#carg").show( "slow");
+            $('#carg').empty().append(htmlMsg);
+            // console.log("valor: " + $('#msg').val());
+            var close = document.getElementsByClassName("closebtn");
+            var i;
+
+            for (i = 0; i < close.length; i++) {
+                close[i].onclick = function(){
+                    var div = this.parentElement;
+                    div.style.opacity = "0";
+                    setTimeout(function(){ div.style.display = "none"; }, 600);
+                }
+            }
         }
 
         function startLoad() {
