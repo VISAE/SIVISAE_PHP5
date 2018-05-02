@@ -106,7 +106,6 @@ $_SESSION["modulo"] = $_GET["op"];
     <link rel="stylesheet" type="text/css" href="template/grilla/estilo_grilla.css">
     <link rel="stylesheet" type="text/css" href="template/css/mensajes.css">
     <script src="js/Chosen1.4/chosen.jquery.min.js" type="text/javascript" language="javascript"></script>
-<!--    <script type="text/javascript" src="js/qtip/jquery.qtip.js"></script>-->
     <script src="js/introLoader/jquery.introLoader.js" type="text/javascript" language="javascript"></script>
     <script src="js/introLoader/spin.min.js" type="text/javascript" language="javascript"></script>
 
@@ -181,7 +180,7 @@ $_SESSION["modulo"] = $_GET["op"];
                         // loader.stop();
                         stopLoad();
                         response = JSON.parse(response);
-                        showSwal(response.titleSwal, '', response.typeSwal);
+                        showSwal(response.titleSwal, response.textSwal?response.textSwal:'', response.typeSwal, !!response.cancelBtn);
                         $("#result").show();
                         $("#result").html(response.response);
                         if(response.alert)
@@ -276,13 +275,18 @@ $_SESSION["modulo"] = $_GET["op"];
             return false;
         }
 
-        function showSwal(title, text, type) {
+        function showSwal(title, text, type, cancel = false) {
             swal({
                 title: title,
                 text: text,
                 type: type,
+                showCancelButton: cancel,
                 confirmButtonColor: '#004669',
                 confirmButtonText: 'Aceptar'
+            }, function (isConfirm) {
+                if (isConfirm && cancel) {
+                    $('#datosEstudiante').show();
+                }
             });
         }
 

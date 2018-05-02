@@ -140,12 +140,10 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
         $consultaFecha = $consulta->verificarFechasInduccion($fecha, $periodo);
         if ($rowF = mysql_fetch_array($consultaFecha)) {
             $salida = Array('typeSwal' => 'warning',
-                'titleSwal' => 'Registro Inexistente proceda a crearlo',
-                'response' => "
-                    <script>
-                        $('#datosEstudiante').show();
-                    </script>                    
-                    ");
+                'titleSwal' => 'Registro Inexistente',
+                'textSwal' => '¿desea proceder a crearlo?',
+                'response' => "",
+                'cancelBtn' => true);
         }
     }
     echo json_encode($salida);
