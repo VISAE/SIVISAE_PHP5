@@ -5351,7 +5351,8 @@ class sivisae_consultas extends Bd {
         $sql = "SELECT `periodo_academico_id`,`descripcion`,`fecha_inicio`, `fecha_fin` 
                 FROM `sivisae`.`periodo_academico` 
                 WHERE `periodo_academico_id` = $periodo 
-                AND '".$fecha."' < DATE_SUB(`fecha_inicio`, INTERVAL 15 DAY) ";
+                AND '".$fecha."' BETWEEN `fecha_inicio` AND `fecha_fin` ";
+        // AND '".$fecha."' < DATE_SUB(`fecha_inicio`, INTERVAL 15 DAY) ";
         $res = mysql_query($sql);
         return $res;
     }

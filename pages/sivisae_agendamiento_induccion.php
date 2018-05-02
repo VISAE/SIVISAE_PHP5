@@ -25,7 +25,10 @@ $consulta = new sivisae_consultas();
         } else {
 
             //Se configuran los permisos (crear, editar, eliminar)
-            $modulo = $_GET["op"];
+            if($_SESSION["perfilid"] === '19')
+                $modulo = '39';
+            else
+                $modulo = $_GET["op"];
 
             if ($modulo != "") {
                 $copy = 0;
@@ -122,7 +125,7 @@ $consulta = new sivisae_consultas();
                 ///validaciones - inicio
 
                 $(document).ready(function () {
-                    /*$("#documento_b").keydown(function (event) {
+                    $("#documento_b").keydown(function (event) {
 
                         if (event.shiftKey)
                         {
@@ -143,8 +146,10 @@ $consulta = new sivisae_consultas();
                                 }
                             }
                         }
-                    });*/
+                    });
                     $("#wrapper").hide();
+                    if($("#a_user").length)
+                        $(".necesitaAyuda").hide();
                 });
 
 
@@ -389,14 +394,27 @@ $consulta = new sivisae_consultas();
             <?php include "../template/sivisae_head_home.php"; ?>
             <!--Encabezado - Fin-->
             <!--Menu - Inicio-->
-            <?php include "sivisae_menu.php"; ?>
+            <?php
+            if ($_SESSION['perfilid'] !== '19') {
+                include "sivisae_menu.php";
+            } else {
+                ?>
+                <input type="hidden" id="a_user">
+            <?php
+            }
+            ?>
             <!--Menu - Fin-->
             <main>
 
                 <div>
 
                     <!--Barra de estado inicio-->
-                    <?php include "sivisae_barra_estado.php"; ?>
+                    <?php
+                    if ($_SESSION['perfilid'] !== '19') {
+                    include "sivisae_barra_estado.php";
+            } else {
+                echo "<br><hr>";
+                    } ?>
                     <!--Barra de estado fin-->
 
                     <div align="center" style="background-color: #004669">
