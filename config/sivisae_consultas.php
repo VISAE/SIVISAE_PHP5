@@ -5466,7 +5466,7 @@ class sivisae_consultas extends Bd {
                 AND `periodo_academico_id` = $periodo ";
         if($participacion)
             $sql .= " AND `participacion` = $participacion ";
-        $sql .= " ORDER BY `fecha` DESC LIMIT 1 ";
+        $sql .= " ORDER BY `fecha` ";
         $res = mysql_query($sql);
         return $res;
     }

@@ -101,9 +101,13 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
         </td>    
     </tr>
     ";
-        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], $induccion['valor']);
+        if ($_SESSION['perfilid'] === '19')
+            $induccionVr = null;
+        else
+            $induccionVr = $induccion['valor'];
+        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], $induccionVr);
         $muestraHorarios = false;
-        if ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
+        while ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
             $fecha = date('j/n/Y', strtotime($vRow['fecha_hora_inicio']));
             $horaInicio = date('h:i A', strtotime($vRow['fecha_hora_inicio']));
             $horaFin = date('h:i A', strtotime($vRow['fecha_hora_fin']));
@@ -136,11 +140,12 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
             ";
             // si el estudiante ha obtenido baja calificación en la evaluación de inducción
             $consultaAsistencia = $consulta->consultaInduccionEstudiante($row['estudiante_id'], $row['periodo_academico_id'], 2);
-            if($rowCA = mysql_fetch_array($consultaAsistencia)) {
+            if($rowCA = mysql_fetch_array($consultaAsistencia) && mysql_num_rows($horariosInduccionEstudiante) <= 1) {
                 $muestraHorarios = true;
                 $induccion = validaTipoInduccion('Virtual');
             }
-        } else {
+        }
+        if(!isset($consultaAsistencia)) {
             $dataText .= "
             <tr><td colspan='2' align='center'>No se encontraron registros</td></tr>
             ";
