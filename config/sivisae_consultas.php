@@ -1033,8 +1033,12 @@ class sivisae_consultas extends Bd {
         return $resultado;
     }
 
-    function periodos() {
-        $sql = "SELECT periodo_academico_id, LOWER(descripcion) FROM SIVISAE.periodo_academico WHERE estado_estado_id = 1  ORDER BY codigo_peraca DESC ;";
+    function periodos($evalDate = null) {
+        $sql = "SELECT periodo_academico_id, LOWER(descripcion) FROM SIVISAE.periodo_academico 
+                WHERE estado_estado_id = 1 ";
+        if($evalDate)
+            $sql .= " AND NOW() < `fecha_inicio` ";
+        $sql .= " ORDER BY codigo_peraca DESC ;";
         $resultado = mysql_query($sql);
         return $resultado;
     }
@@ -5128,7 +5132,7 @@ class sivisae_consultas extends Bd {
 
     function consultaEstudiante($documento) {
         $sql = "SELECT 
-                `estudiante_id`
+                `estudiante_id`, `nombre`, `correo`, `telefono`, `genero`, `cead_cead_id` as cead
                 FROM `SIVISAE`.`estudiante` e
                 WHERE e.cedula='".$documento."'";
         $resultado = mysql_query($sql);

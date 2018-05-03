@@ -76,12 +76,8 @@ $_SESSION["modulo"] = $_GET["op"];
     $sedes = $consulta->traerSedes();
     // consultar periodos
     $pf = $_SESSION['perfilid'];
-
-    if (isset($pf) && $pf !== '1' && $pf !== '3' && $pf !== '4' && $pf !== '6' && $pf !== '7') {
-        $periodos = $consulta->periodos();
-    } else {
-        $periodos = $consulta->periodos_administrador();
-    }
+// sólo los periodos más recientes, anadir parámetro true
+    $periodos = $consulta->periodos();
 
     $permisos_filtro = $consulta->filtro_variables($modulo, $pf);
     while ($row = mysql_fetch_array($permisos_filtro)) {
@@ -180,7 +176,11 @@ $_SESSION["modulo"] = $_GET["op"];
                         // loader.stop();
                         stopLoad();
                         response = JSON.parse(response);
-                        showSwal(response.titleSwal, response.textSwal?response.textSwal:'', response.typeSwal, !!response.cancelBtn);
+                        if(response.data) {
+                            showSwal(response.titleSwal, response.textSwal ? response.textSwal : '', response.typeSwal, !!response.cancelBtn, response.data);
+                        }
+                        else
+                            showSwal(response.titleSwal, response.textSwal?response.textSwal:'', response.typeSwal, !!response.cancelBtn);
                         $("#result").show();
                         $("#result").html(response.response);
                         if(response.alert)
@@ -275,7 +275,7 @@ $_SESSION["modulo"] = $_GET["op"];
             return false;
         }
 
-        function showSwal(title, text, type, cancel = false) {
+        function showSwal(title, text, type, cancel = false, data = null) {
             swal({
                 title: title,
                 text: text,
@@ -285,6 +285,14 @@ $_SESSION["modulo"] = $_GET["op"];
                 confirmButtonText: 'Aceptar'
             }, function (isConfirm) {
                 if (isConfirm && cancel) {
+                    if(data) {
+                        $('#nombre').val(data.nombre);
+                        $('#email').val(data.correo);
+                        $('#telefono').val(data.telefono);
+                        $("input[name='genero'][value='"+data.genero+"']").prop('checked', true);
+                        $("input[name='tipo_estudiante'][value='H']").prop('checked', true);
+                        $('#cead').val(data.cead).trigger("chosen:updated");
+                    }
                     $('#datosEstudiante').show();
                 }
             });

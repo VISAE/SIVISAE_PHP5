@@ -139,11 +139,21 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
         $fecha = date('Y/m/d', time());
         $consultaFecha = $consulta->verificarFechasInduccion($fecha, $periodo);
         if ($rowF = mysql_fetch_array($consultaFecha)) {
-            $salida = Array('typeSwal' => 'warning',
-                'titleSwal' => 'Registro Inexistente',
-                'textSwal' => '¿desea proceder a crearlo?',
-                'response' => "",
-                'cancelBtn' => true);
+            $datosEstudiante = $consulta->consultaEstudiante($documento);
+            if($row = mysql_fetch_array($datosEstudiante)) {
+                $salida = Array('typeSwal' => 'warning',
+                    'titleSwal' => 'Registro Inexistente',
+                    'textSwal' => '¿desea proceder a crearlo?',
+                    'response' => "",
+                    'cancelBtn' => true,
+                    'data' => $row);
+            } else {
+                $salida = Array('typeSwal' => 'warning',
+                    'titleSwal' => 'Registro Inexistente',
+                    'textSwal' => '¿desea proceder a crearlo?',
+                    'response' => "",
+                    'cancelBtn' => true);
+            }
         }
     }
     echo json_encode($salida);
