@@ -86,6 +86,7 @@ if ($_SESSION['perfilid'] !== '2' && $_SESSION['perfilid'] !== '5' && $_SESSION[
                 $url = $row1[1];
                 $id_opcion = $row1[2];
                 $id_padre = $row1[3];  // opción_padre
+                $tiene_sub = $row1[4];
 
                 if ($id_opcion == 22) { // opción Cambiar Contraseña
                     echo "<li class='last' ><a href='" . RUTA_PPAL . $url . "&op=" . $id_opcion . "'><span >$opcion</span></a></li>";
@@ -94,7 +95,7 @@ if ($_SESSION['perfilid'] !== '2' && $_SESSION['perfilid'] !== '5' && $_SESSION[
                         echo "</ul></li>";
                         $subopciones = false;
                     }
-                    if($url == '#') {  // opción con sub opciones
+                    if($tiene_sub) {  // opción con sub opciones
                         echo "<li class='has-sub' ><a href='" . RUTA_PPAL . $url . "?op=" . $id_opcion . "'><span >$opcion</span></a><ul>";
                         $subopciones = true;
                     } else {

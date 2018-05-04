@@ -581,7 +581,7 @@ class sivisae_consultas extends Bd {
 
     function opciones($usuarioid, $menuid) {
         $sql = "SELECT 
-                    o.descripcion, o.url, o.opcion_id, o.opcion_padre
+                    o.descripcion, o.url, o.opcion_id, o.opcion_padre, o.tiene_sub
                 FROM 
                     usuario_perfil up 
                     INNER JOIN perfil_opcion po ON po.perfil_perfil_id = up.perfil_perfil_id 
