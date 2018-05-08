@@ -4673,14 +4673,27 @@ class sivisae_consultas extends Bd {
         return $res;
     }
 
-    function cantReporteInducciones($filtro, $periodo, $zona, $cead, $escuela, $programa) {
+    function cantReporteInducciones($filtro, $periodo, $zona, $cead, $escuela, $programa, $asistencia) {
 
-        $sql = "SELECT count(*) as conteo FROM (
+        if($asistencia === '1') {
+            $sql = "SELECT count(*) as conteo FROM (
               SELECT vm.`cedula`, vm.nombre, vm.`telefono`, vm.`correo`, vm.`descripcion` AS programa, vm.`escuela`, 
-              vm.`descripcion` AS centro, vm.`descripcion` AS zona, vm.`descripcion` AS periodo, vm.tipo_estudiante, vm.numero_matriculas, ie.fecha, ie.tipo_induccion, ie.participacion           
+              vm.`descripcion` AS centro, vm.`descripcion` AS zona, vm.`descripcion` AS periodo, vm.tipo_estudiante, 
+              vm.numero_matriculas, ie.fecha, ie.tipo_induccion, ie.participacion           
               FROM `vta_matricula` vm, induccion_estudiante ie
-              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1
+              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1 AND ie.`periodo_academico_id` = $periodo 
               AND ie.`estudiante_id` =vm.`estudiante_id` ";
+        } else {
+            $sql = "SELECT count(*) as conteo FROM (
+              SELECT vm.`cedula`, vm.nombre, vm.`telefono`, vm.`correo`, 
+              vm.programa AS programa, vm.`escuela`, 
+              vm.cead AS centro, vm.zona AS zona, 
+              vm.`descripcion` AS periodo, vm.tipo_estudiante, 
+              vm.numero_matriculas, 'No Registra' AS fecha, 'No' AS tipo_induccion, 'No' AS participacion 
+              FROM `vta_matricula` vm
+              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1
+              AND vm.`estudiante_id` NOT IN (SELECT `estudiante_id` FROM sivisae.`induccion_estudiante` WHERE `periodo_academico_id` = $periodo) ";
+        }
 
         if ($cead != "T") {
             $sql.= " AND vm.cead_cead_id IN ($cead) ";
@@ -4715,15 +4728,26 @@ class sivisae_consultas extends Bd {
         return $res;
     }
 
-    function ReporteInducciones($filtro, $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page) {
-        $sql = "SELECT * from (SELECT vm.`cedula`, vm.nombre, vm.`telefono`, vm.`correo`, 
-                                vm.programa AS programa, vm.`escuela`, 
-                                vm.cead AS centro, vm.zona AS zona, 
-                                vm.`descripcion` AS periodo, vm.tipo_estudiante, 
-                                vm.numero_matriculas, ie.fecha, ie.tipo_induccion, ie.participacion 
+    function ReporteInducciones($filtro, $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $asistencia) {
+        if($asistencia === '1') {
+            $sql = "SELECT * FROM (
+              SELECT vm.`cedula`, vm.nombre, vm.`telefono`, vm.`correo`, vm.`descripcion` AS programa, vm.`escuela`, 
+              vm.`descripcion` AS centro, vm.`descripcion` AS zona, vm.`descripcion` AS periodo, vm.tipo_estudiante, 
+              vm.numero_matriculas, ie.fecha, ie.tipo_induccion, ie.participacion           
               FROM `vta_matricula` vm, induccion_estudiante ie
-              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1
+              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1 AND ie.`periodo_academico_id` = $periodo 
               AND ie.`estudiante_id` =vm.`estudiante_id` ";
+        } else {
+            $sql = "SELECT * FROM (
+              SELECT vm.`cedula`, vm.nombre, vm.`telefono`, vm.`correo`, 
+              vm.programa AS programa, vm.`escuela`, 
+              vm.cead AS centro, vm.zona AS zona, 
+              vm.`descripcion` AS periodo, vm.tipo_estudiante, 
+              vm.numero_matriculas, 'No Registra' AS fecha, '0' AS tipo_induccion, '0' AS participacion 
+              FROM `vta_matricula` vm
+              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1
+              AND vm.`estudiante_id` NOT IN (SELECT `estudiante_id` FROM sivisae.`induccion_estudiante` WHERE `periodo_academico_id` = $periodo) ";
+        }
 
         if ($cead != "T") {
             $sql.= " AND vm.cead_cead_id IN ($cead) ";
@@ -4754,16 +4778,29 @@ class sivisae_consultas extends Bd {
         return $res;
     }
 
-    function ReporteInduccionesExcel($filtro, $periodo, $zona, $cead, $escuela, $programa) {
-        $sql = "SELECT * from (SELECT vm.`cedula`, vm.nombre, vm.`telefono`, vm.`correo`, 
+    function ReporteInduccionesExcel($filtro, $periodo, $zona, $cead, $escuela, $programa, $asistencia) {
+
+        if($asistencia === '1') {
+            $sql = "SELECT * from (SELECT vm.`cedula`, vm.nombre, vm.`telefono`, vm.`correo`, 
                               vm.programa AS programa, vm.`escuela`, vm.cead AS centro, vm.zona AS zona, vm.`descripcion` AS periodo, 
                               CASE vm.tipo_estudiante WHEN 'H' THEN 'Antiguo' WHEN 'G' THEN 'Nuevo' END AS  tipo_estudiante,
                               ie.fecha,
                               CASE ie.tipo_induccion WHEN '1' THEN 'Presencial' WHEN '2' THEN 'Virtual' END AS  tipo_induccion, 
                               CASE ie.participacion WHEN '1' THEN 'Primera Vez' WHEN '2' THEN 'Reinducción' END AS  participacion
               FROM `vta_matricula` vm, induccion_estudiante ie
-              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1
+              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1 AND ie.`periodo_academico_id` = $periodo 
               AND ie.`estudiante_id` =vm.`estudiante_id` ";
+        } else {
+            $sql = "SELECT * FROM (
+              SELECT vm.`cedula`, vm.nombre, vm.`telefono`, vm.`correo`, 
+              vm.programa AS programa, vm.`escuela`, 
+              vm.cead AS centro, vm.zona AS zona, 
+              vm.`descripcion` AS periodo, CASE vm.tipo_estudiante WHEN 'H' THEN 'Antiguo' WHEN 'G' THEN 'Nuevo' END AS  tipo_estudiante, 
+              'No Registra' AS fecha, 'No Registra' AS tipo_induccion, 'No Registra' AS participacion
+              FROM `vta_matricula` vm
+              WHERE vm.`periodo_academico_id` = $periodo AND vm.`numero_matriculas`<=1
+              AND vm.`estudiante_id` NOT IN (SELECT `estudiante_id` FROM sivisae.`induccion_estudiante` WHERE `periodo_academico_id` = $periodo) ";
+        }
 
         if ($cead != "T") {
             $sql.= " AND vm.cead_cead_id IN ($cead) ";

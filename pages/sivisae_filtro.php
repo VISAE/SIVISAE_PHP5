@@ -260,6 +260,14 @@ $programa = $consulta->filtro_programas($filtro_escuelas, $_SESSION["programa_us
                                 <?php
                                 break;
 
+                            case 10: // Reporte inducción asisten / no asisten
+                                ?>
+                                <td>
+                                    <input type="radio" name="asistencia" value="1" checked>Asistieron<br>
+                                    <input type="radio" name="asistencia" value="0">No Asistieron
+                                </td>
+                                <?php
+                                break;
 
                             default:
                                 break;

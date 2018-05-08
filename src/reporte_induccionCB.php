@@ -40,9 +40,9 @@ $item_per_page = $registros;
 //Obtiene la cantidad total de registros desde BD para crear la paginacion
 $cantAud;
 if (isset($_POST["buscar"]) && $_POST["buscar"] != '') {
-    $cantAud = $consulta->cantReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa);
+    $cantAud = $consulta->cantReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $_POST["asistencia"]);
 } else {
-    $cantAud = $consulta->cantReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa);
+    $cantAud = $consulta->cantReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $_POST["asistencia"]);
 }
 $get_total_rows = $cantAud;
 
@@ -54,9 +54,9 @@ $page_position = (($page_number - 1) * $item_per_page);
 
 
 if (isset($_POST["buscar"]) && $_POST["buscar"] != '') {
-    $inducciones = $consulta->ReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page);
+    $inducciones = $consulta->ReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $_POST["asistencia"]);
 } else {
-    $inducciones = $consulta->ReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page);
+    $inducciones = $consulta->ReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $_POST["asistencia"]);
 }
 
 if (count($inducciones) <= 0) {
@@ -102,8 +102,14 @@ if (count($inducciones) <= 0) {
             $tipo = 'NUEVO';
         }
 
-        $tipoInduccion = ($row[12] === "1") ? "Presencial" : "Virtual";
-        $tipoParticipacion = ($row[12] === "1") ? "Primera vez" : "Reinducción";
+
+        if($row[12] === "0") {
+            $tipoInduccion = "<span style='color: red'>No registra</span>";
+            $tipoParticipacion = "<span style='color: red'>No registra</span>";
+        } else {
+            $tipoInduccion = "<span style='color: green'>".(($row[12] === "1") ? "Presencial" : "Virtual")."</span>";
+            $tipoParticipacion = "<span style='color: green'>".(($row[12] === "1") ? "Primera vez" : "Reinducción")."</span>";
+        }
 
         echo "<tr>"
         . "<td>$row[0]</td>"

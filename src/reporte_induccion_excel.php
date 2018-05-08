@@ -17,20 +17,19 @@ $programa = isset($_POST['programa']) && $_POST['programa'] != '' ? implode(", "
 
 $asignar = array();
 if (isset($_POST["buscar"]) && $_POST["buscar"] != '') {
-    $temp = $consulta->ReporteInduccionesExcel($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa);
+    $temp = $consulta->ReporteInduccionesExcel($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $_POST["asistencia"]);
 } else {
-    $temp = $consulta->ReporteInduccionesExcel('n', $periodo, $zona, $cead, $escuela, $programa);
+    $temp = $consulta->ReporteInduccionesExcel('n', $periodo, $zona, $cead, $escuela, $programa, $_POST["asistencia"]);
 }
 
 while ($fila = mysql_fetch_array($temp)) {
     $asignar[] = $fila;
 }
 
-
-$titulo = "Reporte de inducción";
+$titulo = "Reporte de inducción -".($_POST["asistencia"]==="1"?" ":" No ")."Asistieron";
 
 $columnas = array("DOCUMENTO ESTUDIANTE", "NOMBRE", "TELÉFONO", "CORREO", "PROGRAMA", "ESCUELA", "CENTRO", "ZONA", "PERIODO", "TIPO", "FECHA INDUCCIÓN", "TIPO INDUCCIÓN", "TIPO PARTICIPACIÓN");
-$nombre_arch = "Reporte Inducción";
+$nombre_arch = "Reporte Induccion";
 $desc = "Reporte que contiene un listado inducciones.";
 $ruta = generarReporte($titulo, $columnas, $asignar, $nombre_arch, $desc);
 
