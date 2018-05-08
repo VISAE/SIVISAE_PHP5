@@ -180,7 +180,7 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                         </thead>
                         <tbody> 
                         ";
-            $consultaHorarios = $consulta->HorariosInduccionesAgendamiento($row['periodo_academico_id'], $row['zona_id'], $row['cead_id'], $row['programa_id'], $induccion['valor']);
+            $consultaHorarios = $consulta->HorariosInduccionesAgendamiento($row['periodo_academico_id'], $row['zona_id'], $row['cead_id'], $row['escuela'], $induccion['valor']);
             if(mysql_num_rows($consultaHorarios)) {
                 while ($horarios = mysql_fetch_array($consultaHorarios)) {
                     $fecha = date('j/n/Y', strtotime($horarios['fecha_hora_inicio']));

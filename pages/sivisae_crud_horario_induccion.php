@@ -101,7 +101,6 @@
                                         Zona:
                                         Cead:
                                         Escuela:
-                                        Programa:
                                     </label>
                                     <input type="hidden" name="horario" id="hiddenhorario_e" />
                                     <input type="hidden" name="periodo" id="hiddenPeriodo_e" />

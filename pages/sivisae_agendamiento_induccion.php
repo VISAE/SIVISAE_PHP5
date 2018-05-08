@@ -125,7 +125,7 @@ $consulta = new sivisae_consultas();
                 ///validaciones - inicio
 
                 $(document).ready(function () {
-                    $("#documento_b").keydown(function (event) {
+                    /*$("#documento_b").keydown(function (event) {
 
                         if (event.shiftKey)
                         {
@@ -146,7 +146,7 @@ $consulta = new sivisae_consultas();
                                 }
                             }
                         }
-                    });
+                    });*/
                     $("#wrapper").hide();
                     if($("#a_user").length)
                         $(".necesitaAyuda").hide();

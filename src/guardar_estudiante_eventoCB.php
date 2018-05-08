@@ -8,15 +8,15 @@ if(isset($_POST['cedula_id'])) {
     if(!$row = mysql_fetch_array($datosEstudiante)) {
         $datos = array(
             'cedula' => $_POST['cedula_id'],
-            'nombre' => $_POST['nombre'],
+            'nombre' => $_POST['nombre'].' '.$_POST['apellido'],
             'correo' => $_POST['email'],
             'cead_cead_id' => $_POST['cead'][0],
-            'skype' => $_POST['skype'],
-            'fecha_nacimiento' => $_POST['1970-01-01'],
+            'skype' => 'skype',
+            'fecha_nacimiento' => '1970-01-01',
             'genero' => $_POST['genero'],
-            'estado_civil' => $_POST['Soltero(a)'],
+            'estado_civil' => 'Soltero(a)',
             'telefono' => $_POST['telefono'],
-            'usuario' => $_POST['']
+            'usuario' => ''
         );
         $idEstudiante = $consulta->agregaEstudiante($datos);
         $tipoEstudiante = 'G';

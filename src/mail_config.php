@@ -18,7 +18,7 @@ class mail_config extends PHPMailer {
         // 0 = off (for production use)
         // 1 = client messages
         // 2 = client and server messages
-        // $this->mail->SMTPDebug = 2;
+        $this->mail->SMTPDebug = 2;
         $this->mail->Host = "smtp.gmail.com";
         $this->mail->Port = 587;//465;
         $this->mail->SMTPSecure = "tls";//"ssl";

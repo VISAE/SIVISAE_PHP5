@@ -12,7 +12,7 @@ $periodo = $_POST['periodo'];
 $zona = isset($_POST['zona']) && $_POST['zona'] != '' ? implode(", ", $_POST['zona']) : "T";
 $cead = isset($_POST['cead']) && $_POST['cead'] != '' ? implode(", ", $_POST['cead']) : "T";
 $escuela = isset($_POST['escuela']) && $_POST['escuela'] != '' ? implode("', '", $_POST['escuela']) : "T";
-$programa = isset($_POST['programa']) && $_POST['programa'] != '' ? implode(", ", $_POST['programa']) : "T";
+//$programa = isset($_POST['programa']) && $_POST['programa'] != '' ? implode(", ", $_POST['programa']) : "T";
 //$pagina = $_POST["page"];
 $auditor = isset($_POST['auditor']) && $_POST['auditor'] != '' ? $_POST['auditor'] : 'T';
 
@@ -39,7 +39,7 @@ if (isset($_POST["page"])) {
 $item_per_page = $registros;
 //Obtiene la cantidad total de registros desde BD para crear la paginacion
 $cantAud;
-$cantAud = $consulta->cantHorariosInducciones($periodo, $zona, $cead, $escuela, $programa);
+$cantAud = $consulta->cantHorariosInducciones($periodo, $zona, $cead, $escuela);
 
 $get_total_rows = $cantAud;
 
@@ -49,7 +49,7 @@ $total_pages = ceil($get_total_rows / $item_per_page);
 //Obtengo la posicion en que debe arrancar la siguiente consulta.
 $page_position = (($page_number - 1) * $item_per_page);
 
-$inducciones = $consulta->HorariosInducciones($periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page);
+$inducciones = $consulta->HorariosInducciones($periodo, $zona, $cead, $escuela, $page_position, $item_per_page);
 
 if (count($inducciones) <= 0) {
     echo 'No existen resultados para esta consulta';
@@ -68,7 +68,6 @@ if (count($inducciones) <= 0) {
                                         <tr>
                                                 <th>ZONA</th>
                                                 <th>CEAD</th>
-                                                <th>PROGRAMA</th>
                                                 <th>ESCUELA</th>
                                                 <th>PERIODO ACADEMICO</th>
                                                 <th>FECHA Y HORA INICIAL</th>
@@ -86,21 +85,19 @@ if (count($inducciones) <= 0) {
         $horario_id = $row[0];
         $zona_des = $row[1];
         $cead_des = $row[2];
-        $programa_des = $row[3];
-        $escuela_des = $row[4];
-        $periodo_academico = $row[5];
-        $fecha_y_hora_inicial = $row[6];
-        $fecha_y_hora_final = $row[7];
-        $salon = $row[8];
-        $cupos = $row[9];
-        $inscritos = $row[10];
-        $tipo_induccion_id = $row[11];
-        $tipo_induccion = $row[12];
+        $escuela_des = $row[3];
+        $periodo_academico = $row[4];
+        $fecha_y_hora_inicial = $row[5];
+        $fecha_y_hora_final = $row[6];
+        $salon = $row[7];
+        $cupos = $row[8];
+        $inscritos = $row[9];
+        $tipo_induccion_id = $row[10];
+        $tipo_induccion = $row[11];
 
         echo "<tr>"
         . "<td>$zona_des</td>"
         . "<td>$cead_des</td>"
-        . "<td>$programa_des</td>"
         . "<td>$escuela_des</td>"
         . "<td>$periodo_academico</td>"
         . "<td>$fecha_y_hora_inicial</td>"
@@ -111,7 +108,7 @@ if (count($inducciones) <= 0) {
         . "<td>$tipo_induccion</td>"
         . "<td> <button title='Editar Horario' ".$_SESSION['opc_ed']." id='boton_editar" . $horario_id . "' onclick='activarpopupeditar(" . $horario_id . ")'></button> </td>"
         . "<td> <button title='Eliminar Horario' ".$_SESSION['opc_el']."  id='boton_eliminar" . $horario_id . "' onclick='activarpopupeliminar(" . $horario_id . ")'></button> </td>"
-        . "<input type='hidden' id='input_" . $horario_id . "' value='" . $horario_id . "|" . $zona_des . "|" . $cead_des . "|" . $programa_des . "|" . $escuela_des . "|" . $periodo_academico . "|" . $fecha_y_hora_inicial . "|" . $fecha_y_hora_final . "|" . $salon . "|" . $cupos . "|" . $inscritos . "|" . $tipo_induccion_id . "'></input>"
+        . "<input type='hidden' id='input_" . $horario_id . "' value='" . $horario_id . "|" . $zona_des . "|" . $cead_des . "|" . $escuela_des . "|" . $periodo_academico . "|" . $fecha_y_hora_inicial . "|" . $fecha_y_hora_final . "|" . $salon . "|" . $cupos . "|" . $inscritos . "|" . $tipo_induccion_id . "'></input>"
         . "</tr>";
     }
 

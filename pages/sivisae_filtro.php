@@ -129,19 +129,26 @@ $programa = $consulta->filtro_programas($filtro_escuelas, $_SESSION["programa_us
                 ?>
             </select>
         </td>
-        <td class="e">
-            Programa:
-            <select id="programa" name="programa[]" data-placeholder="Seleccione un Programa" class="chosen-select" multiple style="width:180px;" tabindex="4">
-                <option value=""></option>
-                <?php
-                while ($row = mysql_fetch_array($programa)) {
-                    echo "<option value='$row[0]'>" .
-                    $row[1] . " - " . ucwords($row[2]) .
-                    "</option>";
-                }
-                ?>
-            </select>
-        </td>
+        <?php
+        if($modulo != 38) {
+            ?>
+            <td class="e">
+                Programa:
+                <select id="programa" name="programa[]" data-placeholder="Seleccione un Programa" class="chosen-select"
+                        multiple style="width:180px;" tabindex="4">
+                    <option value=""></option>
+                    <?php
+                    while ($row = mysql_fetch_array($programa)) {
+                        echo "<option value='$row[0]'>" .
+                            $row[1] . " - " . ucwords($row[2]) .
+                            "</option>";
+                    }
+                    ?>
+                </select>
+            </td>
+            <?php
+        }
+        ?>
     </tr>
     <tr>
         <td colspan="5" align="center"><br>

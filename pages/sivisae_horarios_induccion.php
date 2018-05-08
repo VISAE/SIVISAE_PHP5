@@ -218,22 +218,21 @@ $consulta = new sivisae_consultas();
             var ids = str.split("|");
             //Se llenan los campos segun el formulario
             $('#datosGenerales_e').html(
-                "<strong>Periodo:</strong> "+ids[5]+"<br/>" +
+                "<strong>Periodo:</strong> "+ids[4]+"<br/>" +
                 "<strong>Zona:</strong> "+ids[1]+"<br/>" +
                 "<strong>Cead:</strong> "+ids[2]+"<br/>" +
-                "<strong>Escuela:</strong> "+ids[4]+"<br/>" +
-                "<strong>Programa:</strong> "+ids[3]
+                "<strong>Escuela:</strong> "+ids[3]
             );
             document.getElementById("hiddenhorario_e").value = ids[0];
             document.getElementById("hiddenPeriodo_e").value = $("#periodo").val();
-            var fechaIni = ids[6].split(" ");
+            var fechaIni = ids[5].split(" ");
             document.getElementById("fecha_hora_inicio_e").value = fechaIni[0]+"T"+fechaIni[1];
-            var fechaFin = ids[7].split(" ");
+            var fechaFin = ids[6].split(" ");
             document.getElementById("fecha_hora_fin_e").value = fechaFin[0]+"T"+fechaFin[1];
-            document.getElementById("salon_e").value = ids[8];
-            document.getElementById("cupos_e").value = ids[9];
-            $("#tipo_induccion_e").val(ids[11]);
-            if(ids[11] === '2')
+            document.getElementById("salon_e").value = ids[7];
+            document.getElementById("cupos_e").value = ids[8];
+            $("#tipo_induccion_e").val(ids[10]);
+            if(ids[10] === '2')
                 $("#salon_e").prop('readonly',true);
             else
                 $("#salon_e").prop('readonly',false);
@@ -247,17 +246,16 @@ $consulta = new sivisae_consultas();
                 e.preventDefault();
                 var fila = $('#boton_eliminar' + id).parent().parent().children();
                 $('#datosGenerales_el').html(
-                    "<strong>Periodo:</strong> "+fila[4].textContent+"<br/>" +
+                    "<strong>Periodo:</strong> "+fila[3].textContent+"<br/>" +
                     "<strong>Zona:</strong> "+fila[0].textContent+"<br/>" +
                     "<strong>Cead:</strong> "+fila[1].textContent+"<br/>" +
                     "<strong>Escuela:</strong> "+fila[2].textContent+"<br/>" +
-                    "<strong>Programa:</strong> "+fila[3].textContent+"<br/>" +
-                    "<strong>Fecha y Hora Inicial:</strong> "+fila[5].textContent+"<br/>" +
-                    "<strong>Fecha y Hora Final:</strong> "+fila[6].textContent+"<br/>" +
-                    "<strong>Salón:</strong> "+fila[7].textContent+"<br/>" +
-                    "<strong>Cupos:</strong> "+fila[8].textContent+"<br/>" +
-                    "<strong>Inscritos:</strong> "+fila[9].textContent+"<br/>" +
-                    "<strong>Tipo de Inducción:</strong> "+fila[10].textContent+"<br/>"
+                    "<strong>Fecha y Hora Inicial:</strong> "+fila[4].textContent+"<br/>" +
+                    "<strong>Fecha y Hora Final:</strong> "+fila[5].textContent+"<br/>" +
+                    "<strong>Salón:</strong> "+fila[6].textContent+"<br/>" +
+                    "<strong>Cupos:</strong> "+fila[7].textContent+"<br/>" +
+                    "<strong>Inscritos:</strong> "+fila[8].textContent+"<br/>" +
+                    "<strong>Tipo de Inducción:</strong> "+fila[9].textContent+"<br/>"
                 );
                 document.getElementById("id_el").value = id;
                 $('#result_el').html('');
@@ -360,7 +358,7 @@ $consulta = new sivisae_consultas();
                         var search = $("#buscar").val();
                         var periodo = $("#periodo").val();
                         var escuela = $("#escuela").val();
-                        var programa = $("#programa").val();
+                        // var programa = $("#programa").val();
 
                         $("#list_horarios").on("click", ".pagination a", function (e) {
                             e.preventDefault();
@@ -372,8 +370,8 @@ $consulta = new sivisae_consultas();
                                 "registros": reg,
                                 "buscar": search,
                                 "periodo": periodo,
-                                "escuela": escuela,
-                                "programa": programa
+                                "escuela": escuela
+                                // "programa": programa
                             },
                             function () { //get content from PHP page 
                                 stopLoad();

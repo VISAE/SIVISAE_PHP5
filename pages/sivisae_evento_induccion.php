@@ -169,6 +169,7 @@ $_SESSION["modulo"] = $_GET["op"];
                     type: 'POST',
                     beforeSend: function () {
                         $('#datosEstudiante').hide();
+                        resetForm('#formEstudiante');
                         startLoad();
                     },
                     success: function (response) {
@@ -291,6 +292,7 @@ $_SESSION["modulo"] = $_GET["op"];
                         $('#telefono').val(data.telefono);
                         $("input[name='genero'][value='"+data.genero+"']").prop('checked', true);
                         $("input[name='tipo_estudiante'][value='H']").prop('checked', true);
+                        $('#zona').val(data.zona).trigger("chosen:updated");
                         $('#cead').val(data.cead).trigger("chosen:updated");
                     }
                     $('#datosEstudiante').show();
@@ -360,6 +362,11 @@ $_SESSION["modulo"] = $_GET["op"];
                 return false;
             }
             return true;
+        }
+
+        function resetForm(formId) {
+            $(formId)[0].reset();
+            $('.chosen-select').val('').trigger("chosen:updated");
         }
 
         function filtros(cual) {
