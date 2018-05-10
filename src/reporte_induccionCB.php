@@ -15,6 +15,8 @@ $escuela = isset($_POST['escuela']) && $_POST['escuela'] != '' ? implode("', '",
 $programa = isset($_POST['programa']) && $_POST['programa'] != '' ? implode(", ", $_POST['programa']) : "T";
 //$pagina = $_POST["page"];
 $auditor = isset($_POST['auditor']) && $_POST['auditor'] != '' ? $_POST['auditor'] : 'T';
+$induccion = $_POST['induccion'];
+$asistencia = $_POST['asistencia'];
 
 $registros;
 $buscar;
@@ -40,9 +42,9 @@ $item_per_page = $registros;
 //Obtiene la cantidad total de registros desde BD para crear la paginacion
 $cantAud;
 if (isset($_POST["buscar"]) && $_POST["buscar"] != '') {
-    $cantAud = $consulta->cantReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $_POST["asistencia"]);
+    $cantAud = $consulta->cantReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $induccion, $asistencia);
 } else {
-    $cantAud = $consulta->cantReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $_POST["asistencia"]);
+    $cantAud = $consulta->cantReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $induccion, $asistencia);
 }
 $get_total_rows = $cantAud;
 
@@ -54,9 +56,9 @@ $page_position = (($page_number - 1) * $item_per_page);
 
 
 if (isset($_POST["buscar"]) && $_POST["buscar"] != '') {
-    $inducciones = $consulta->ReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $_POST["asistencia"]);
+    $inducciones = $consulta->ReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $induccion, $asistencia);
 } else {
-    $inducciones = $consulta->ReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $_POST["asistencia"]);
+    $inducciones = $consulta->ReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $induccion, $asistencia);
 }
 
 if (count($inducciones) <= 0) {
@@ -102,13 +104,12 @@ if (count($inducciones) <= 0) {
             $tipo = 'NUEVO';
         }
 
-
-        if($row[12] === "0") {
-            $tipoInduccion = "<span style='color: red'>No registra</span>";
-            $tipoParticipacion = "<span style='color: red'>No registra</span>";
+        if($asistencia === "0") {
+            $tipoInduccion = "No registra";
+            $tipoParticipacion = "No registra";
         } else {
-            $tipoInduccion = "<span style='color: green'>".(($row[12] === "1") ? "Presencial" : "Virtual")."</span>";
-            $tipoParticipacion = "<span style='color: green'>".(($row[12] === "1") ? "Primera vez" : "Reinducción")."</span>";
+            $tipoInduccion = ($row[12] === "1") ? "Presencial" : "Virtual";
+            $tipoParticipacion = ($row[12] === "1") ? "Primera vez" : "Reinducción";
         }
 
         echo "<tr>"

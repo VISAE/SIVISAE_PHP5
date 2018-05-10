@@ -12,21 +12,22 @@ $zona = isset($_POST['zona']) && $_POST['zona'] != '' ? implode(", ", $_POST['zo
 $cead = isset($_POST['cead']) && $_POST['cead'] != '' ? implode(", ", $_POST['cead']) : "T";
 $escuela = isset($_POST['escuela']) && $_POST['escuela'] != '' ? implode("', '", $_POST['escuela']) : "T";
 $programa = isset($_POST['programa']) && $_POST['programa'] != '' ? implode(", ", $_POST['programa']) : "T";
-
+$induccion = $_POST['induccion'];
+$asistencia = $_POST['asistencia'];
 
 
 $asignar = array();
 if (isset($_POST["buscar"]) && $_POST["buscar"] != '') {
-    $temp = $consulta->ReporteInduccionesExcel($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $_POST["asistencia"]);
+    $temp = $consulta->ReporteInduccionesExcel($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $induccion, $asistencia);
 } else {
-    $temp = $consulta->ReporteInduccionesExcel('n', $periodo, $zona, $cead, $escuela, $programa, $_POST["asistencia"]);
+    $temp = $consulta->ReporteInduccionesExcel('n', $periodo, $zona, $cead, $escuela, $programa, $induccion, $asistencia);
 }
 
 while ($fila = mysql_fetch_array($temp)) {
     $asignar[] = $fila;
 }
 
-$titulo = "Reporte de inducción -".($_POST["asistencia"]==="1"?" ":" No ")."Asistieron";
+$titulo = "Reporte de inducción -".($asistencia === '0'?" NO ":" ")."Asistieron";
 
 $columnas = array("DOCUMENTO ESTUDIANTE", "NOMBRE", "TELÉFONO", "CORREO", "PROGRAMA", "ESCUELA", "CENTRO", "ZONA", "PERIODO", "TIPO", "FECHA INDUCCIÓN", "TIPO INDUCCIÓN", "TIPO PARTICIPACIÓN");
 $nombre_arch = "Reporte Induccion";
