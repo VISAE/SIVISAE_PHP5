@@ -8,7 +8,7 @@ $salon = $_POST['salon'];
 $fecha_hora_inicio = explode('T', $_POST['fecha_hora_inicio']);
 $fecha_hora_fin = explode('T', $_POST['fecha_hora_fin']);
 $cupos = $_POST['cupos'];
-$tipo_induccion = $_POST['tipo_induccion'];
+$tipo_induccion = $_POST['tipo_induccion'] + (isset($_POST['tipo_induccion_general'])?$_POST['tipo_induccion_general']:1);
 
 
 $update = new sivisae_consultas();

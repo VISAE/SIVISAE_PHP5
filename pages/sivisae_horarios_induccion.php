@@ -116,13 +116,26 @@ $consulta = new sivisae_consultas();
             });
             $("#tipo_induccion, #tipo_induccion_e").change(function () {
                 if($(this).val() === '2') {
-                    $("#salon, #salon_e").val('Virtual');
-                    $("#salon, #salon_e").prop('readonly',true);
+                    $("#row_tipo_induccion_general, #row_tipo_induccion_general_e").hide();
+                    $("#salon, #salon_e").val("");
+                    $("#salon, #salon_e").prop("readOnly", false);
                 } else {
-                    $("#salon, #salon_e").val('');
-                    $("#salon, #salon_e").prop('readonly',false);
+                    $("#row_tipo_induccion_general, #row_tipo_induccion_general_e").show();
+                    $('#tipo_induccion_general').first().prop('checked', true);
+                    $('#tipo_induccion_general_e').first().prop('checked', true);
                 }
             });
+
+            $('input[name=tipo_induccion_general], input[name=tipo_induccion_general_e]').change(function() {
+                if(this.value == 2) {
+                    $("#salon, #salon_e").val("Virtual");
+                    $("#salon, #salon_e").prop("readOnly", true);
+                } else {
+                    $("#salon, #salon_e").val("");
+                    $("#salon, #salon_e").prop("readOnly", false);
+                }
+            });
+
             $("#fecha_hora_inicio").change(function () {
                 $("#fecha_hora_fin").val($(this).val());
             });
@@ -160,6 +173,11 @@ $consulta = new sivisae_consultas();
                     }
                 }
             });
+            $("#salon, #salon_e").keydown(function (event) {
+                if (event.keyCode == 32) {
+                    event.preventDefault();
+                }
+            });
         });
 
         ///validaciones - fin
@@ -192,6 +210,8 @@ $consulta = new sivisae_consultas();
                     }
                 });
                 $("#tipo_induccion").chosen();
+                $("#row_tipo_induccion_general").show();
+                $('#tipo_induccion_general').prop('checked', true);
             });
         }
 
@@ -210,6 +230,7 @@ $consulta = new sivisae_consultas();
                 cargar_popup_editar(id);
                 $('#popup_editar').bPopup();
                 $("#tipo_induccion_e").chosen();
+                //$('#tipo_induccion_general_e').prop('checked', true);
             });
         }
 
@@ -231,11 +252,16 @@ $consulta = new sivisae_consultas();
             document.getElementById("fecha_hora_fin_e").value = fechaFin[0]+"T"+fechaFin[1];
             document.getElementById("salon_e").value = ids[7];
             document.getElementById("cupos_e").value = ids[8];
-            $("#tipo_induccion_e").val(ids[10]);
-            if(ids[10] === '2')
-                $("#salon_e").prop('readonly',true);
-            else
-                $("#salon_e").prop('readonly',false);
+            if(ids[10] > 2) {
+                $("#tipo_induccion_e").val(2);
+                $("#salon_e").prop('readonly', false);
+                $("#row_tipo_induccion_general_e").hide();
+            } else {
+                $("#tipo_induccion_e").val(0);
+                $("#salon_e").prop('readonly', ids[10]==2);
+                $('input[id=tipo_induccion_general_e]')[ids[10]-1].checked = true;
+                $("#row_tipo_induccion_general_e").show();
+            }
             //Se limpia estado
             $('#result_e').html('');
         }
@@ -479,7 +505,7 @@ $consulta = new sivisae_consultas();
                     this.checked = false;
                 else if (type === 'datetime-local')
                     this.value = this.defaultValue;
-                // los selects le ponesmos el indice a -
+                // los selects le ponemos el indice a -
                 else if (tag === 'select')
                 {
                     this.selectedIndex = -1;

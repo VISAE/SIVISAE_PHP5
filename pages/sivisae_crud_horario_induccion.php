@@ -43,6 +43,13 @@
                                     <td><input style="width: 230px;" id="fecha_hora_fin" name="fecha_hora_fin" type="datetime-local"
                                                maxlength="30" required="Falta la fecha y hora"/></td>
                                 </tr>
+                                <tr id="row_tipo_induccion_general">
+                                    <td></td>
+                                    <td>
+                                        <input type="radio" id="tipo_induccion_general" name="tipo_induccion_general" value="1" checked>Presencial
+                                        <input type="radio" id="tipo_induccion_general" name="tipo_induccion_general" value="2">Virtual
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>Salón (*):</td>
                                     <td><input style="width: 230px;" id="salon" name="salon" type="text"
@@ -57,7 +64,7 @@
                                 <tr>
                                     <td>Tipo de inducción (*):</td>
                                     <td><select style="width: 230px;" id="tipo_induccion" name="tipo_induccion" data-placeholder='Seleccione tipo de inducción' required="Falta tipo de inducción">
-                                            <option value="1">Inducción General</option>
+                                            <option value="0">Inducción General</option>
                                             <option value="2">Inmersión a Campus</option>
                                         </select>
                                     </td>
@@ -116,10 +123,18 @@
                                 <td><input style="width: 230px;" id="fecha_hora_fin_e" name="fecha_hora_fin" type="datetime-local"
                                            maxlength="30" required="Falta la fecha y hora"/></td>
                             </tr>
+                            <tr id="row_tipo_induccion_general_e">
+                                <td></td>
+                                <td>
+                                    <input type="radio" id="tipo_induccion_general_e" name="tipo_induccion_general" value="1" checked>Presencial
+                                    <input type="radio" id="tipo_induccion_general_e" name="tipo_induccion_general" value="2">Virtual
+                                </td>
+                            </tr>
                             <tr>
                                 <td>Salón :</td>
                                 <td><input style="width: 230px;" id="salon_e" name="salon" type="text"
-                                           maxlength="30" /></td>
+                                           maxlength="30"
+                                           required/></td>
                             </tr>
                             <tr>
                                 <td>Cupos (*):</td>
@@ -130,7 +145,7 @@
                             <tr>
                                 <td>Tipo de inducción (*):</td>
                                 <td><select style="width: 230px;" id="tipo_induccion_e" name="tipo_induccion" data-placeholder='Seleccione tipo de inducción' required="Falta tipo de inducción">
-                                        <option value="1">Inducción General</option>
+                                        <option value="0">Inducción General</option>
                                         <option value="2">Inmersión a Campus</option>
                                     </select>
                                 </td>
