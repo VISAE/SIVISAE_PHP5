@@ -450,9 +450,9 @@ $consulta = new sivisae_consultas();
                                             <td colspan="2" align="center">
                                                 <br>
                                                 <div>
-                                                    <input type="radio" name="tipo_induccion" value="General">Inducción
+                                                    <input type="radio" name="tipo_induccion" value="0">Inducción
                                                     General<br>
-                                                    <input type="radio" name="tipo_induccion" value="Virtual">Inmersión
+                                                    <input type="radio" name="tipo_induccion" value="2">Inmersión
                                                     a Campus
                                                 </div>
                                             </td>

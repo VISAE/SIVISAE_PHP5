@@ -5486,7 +5486,7 @@ class sivisae_consultas extends Bd {
                 WHERE ihe.`estudiante_estudiante_id` = $estudiante_id 
                 AND m.`periodo_academico_periodo_academico_id` = $periodo_academico_id ";
         if($induccion)
-                $sql .= " AND ih.`tipo_induccion` = $induccion ";
+                $sql .= " AND ih.`tipo_induccion` IN ($induccion) ";
         $rta = mysql_query($sql);
         return $rta;
     }
@@ -5502,7 +5502,7 @@ class sivisae_consultas extends Bd {
             $sql .= " AND `escuela` LIKE '%$escuela%' ";
         }
         if($induccion) {
-            $sql .= " AND `tipo_induccion_id` = $induccion ";
+            $sql .= " AND `tipo_induccion_id` IN ($induccion) ";
         }
         $sql .= " AND `cupos` > 0 
                  ORDER BY `salon` ASC ";

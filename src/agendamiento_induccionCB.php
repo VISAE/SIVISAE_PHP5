@@ -11,22 +11,22 @@ $consulta = new sivisae_consultas();
 
 $documento = $_POST['documento_b'];
 $tipoInduccion = null;
-$induccion = array('titulo' => '', 'valor' => 1);
+$induccion = array('titulo' => '', 'valor' => array(1,2));
 $actionTitle = '';
 $action = '';
 $modulo = $_POST["op"];
 
 function validaTipoInduccion($tipoInduccion) {
-    if($tipoInduccion === 'Virtual') {
+    if($tipoInduccion === '2') {
         return array(
             'titulo' => ' - Inmersión a Campus',
-            'valor' => 2
+            'valor' => array(3,4)
         );
     }
 
     return array(
         'titulo' => ' - Inducción General',
-        'valor' => 1
+        'valor' => array(1,2)
     );
 }
 
@@ -104,7 +104,7 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
         if ($_SESSION['perfilid'] === '19')
             $induccionVr = null;
         else
-            $induccionVr = $induccion['valor'];
+            $induccionVr = join(', ',$induccion['valor']);
         $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], $induccionVr);
         $muestraHorarios = false;
         while ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
@@ -142,7 +142,7 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
             $consultaAsistencia = $consulta->consultaInduccionEstudiante($row['estudiante_id'], $row['periodo_academico_id'], 2);
             if($rowCA = mysql_fetch_array($consultaAsistencia) && mysql_num_rows($horariosInduccionEstudiante) <= 1) {
                 $muestraHorarios = true;
-                $induccion = validaTipoInduccion('Virtual');
+                $induccion = validaTipoInduccion(2);
             }
         }
         if(!isset($consultaAsistencia)) {
@@ -180,7 +180,8 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                         </thead>
                         <tbody> 
                         ";
-            $consultaHorarios = $consulta->HorariosInduccionesAgendamiento($row['periodo_academico_id'], $row['zona_id'], $row['cead_id'], $row['escuela'], $induccion['valor']);
+            $induccionVr = join(', ',$induccion['valor']);
+            $consultaHorarios = $consulta->HorariosInduccionesAgendamiento($row['periodo_academico_id'], $row['zona_id'], $row['cead_id'], $row['escuela'], $induccionVr);
             if(mysql_num_rows($consultaHorarios)) {
                 while ($horarios = mysql_fetch_array($consultaHorarios)) {
                     $fecha = date('j/n/Y', strtotime($horarios['fecha_hora_inicio']));
