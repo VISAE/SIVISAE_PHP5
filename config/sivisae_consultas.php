@@ -5183,7 +5183,7 @@ class sivisae_consultas extends Bd {
 
     // INICIO METODOS INDUCCIÓN
 
-    function consultarMatriculado($documento, $periodo = NULL) {
+    function consultarMatriculado($documento, $periodo = null, $programa = null, $tipoEstudiante = null, $matriculas = null) {
         $sql = "SELECT 
                 e.`cedula`, e.`nombre`, e.`correo`, e.`telefono`, pro.`descripcion` AS programa, pro.`escuela`, 
                 c.`descripcion` AS cead, z.`descripcion` AS zona, m.`tipo_estudiante`, m.`numero_matriculas`, 
@@ -5196,9 +5196,15 @@ class sivisae_consultas extends Bd {
                 INNER JOIN `periodo_academico` pa ON m.`periodo_academico_periodo_academico_id` = pa.`periodo_academico_id`
                 WHERE pa.`estado_estado_id`=1
                 AND e.cedula='".$documento."' ";
-        if(!is_null($periodo))
+        if($periodo)
             $sql .= " AND m.`periodo_academico_periodo_academico_id`='".$periodo."' ";
-        $sql .= " ORDER BY pa.`periodo_academico_id` DESC ";
+        if($programa)
+            $sql = " AND pro.`programa_id` = $programa ";
+        if($tipoEstudiante)
+            $sql .= " AND e.`tipo_estudiante` = $tipoEstudiante ";
+        if($matriculas)
+            $sql .= " AND m.`numero_matriculas` = $matriculas ";
+        $sql .= " ORDER BY m.`matricula_id` DESC ";
         $result = mysql_query($sql);
         return $result;
     }

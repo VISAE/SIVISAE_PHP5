@@ -192,11 +192,8 @@ $consulta = new sivisae_consultas();
                         }
                     })
                         .done(function (data) {
-                            if($("#tablaHorariosEstudiantes").length)
-                                muestraAlertas(
-                                    'alert info',
-                                    'Nota: ',
-                                    'en caso de NO asistir en la fecha programada por favor comuníquese con su centro para reprogramar' + additional);
+                            //if($("#tablaHorariosEstudiantes").length)
+                                muestraAlertas(additional.type, additional.bold, additional.text);
                         });
                     return false;
                 }

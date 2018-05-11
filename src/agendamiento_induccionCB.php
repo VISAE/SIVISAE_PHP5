@@ -10,23 +10,26 @@ include_once '../config/sivisae_class.php';
 $consulta = new sivisae_consultas();
 
 $documento = $_POST['documento_b'];
+$programa = 78; // cursos libres
+$tipoEstudiante = 'G'; // Estudiantes nuevos
 $tipoInduccion = null;
-$induccion = array('titulo' => '', 'valor' => array(1,2));
+$induccion = array('titulo' => '', 'valor' => array(1, 2));
 $actionTitle = '';
 $action = '';
 $modulo = $_POST["op"];
 
-function validaTipoInduccion($tipoInduccion) {
-    if($tipoInduccion === '2') {
+function validaTipoInduccion($tipoInduccion)
+{
+    if ($tipoInduccion === '2') {
         return array(
             'titulo' => ' - Inmersión a Campus',
-            'valor' => array(3,4)
+            'valor' => array(3, 4)
         );
     }
 
     return array(
         'titulo' => ' - Inducción General',
-        'valor' => array(1,2)
+        'valor' => array(1, 2)
     );
 }
 
@@ -47,7 +50,7 @@ if ($modulo != "") {
     $delete = 0;
 }
 
-if($copy && $edit && $delete) {
+if ($copy && $edit && $delete) {
     $tipoInduccion = $_POST['tipo_induccion'];
     $actionTitle = "<th title='Doble click'>Eliminar</th>";
     $action = "<td><button title='Eliminar Horario' $_SESSION[opc_el] name='boton_eliminar' id='boton_eliminar' type='button' onclick='HorarioCRUD(2);'></button></td>";
@@ -96,22 +99,22 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
     <tr>
         <td colspan='2'>
             <div align='center' style='background-color: #004669'>
-                <h2 id='p_fieldset_autenticacion_2'>Inscripciones Actuales".$induccion['titulo']."</h2>
+                <h2 id='p_fieldset_autenticacion_2'>Inscripciones Actuales" . $induccion['titulo'] . "</h2>
             </div>
         </td>    
     </tr>
     ";
-        if ($_SESSION['perfilid'] === '19')
-            $induccionVr = null;
-        else
-            $induccionVr = join(', ',$induccion['valor']);
-        $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], $induccionVr);
-        $muestraHorarios = false;
-        while ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
-            $fecha = date('j/n/Y', strtotime($vRow['fecha_hora_inicio']));
-            $horaInicio = date('h:i A', strtotime($vRow['fecha_hora_inicio']));
-            $horaFin = date('h:i A', strtotime($vRow['fecha_hora_fin']));
-            $dataText .= "
+    if ($_SESSION['perfilid'] === '19')
+        $induccionVr = null;
+    else
+        $induccionVr = join(', ', $induccion['valor']);
+    $horariosInduccionEstudiante = $consulta->verificarHorariosInducciónEstudiante($row['estudiante_id'], $row['periodo_academico_id'], $induccionVr);
+    $muestraHorarios = false;
+    while ($vRow = mysql_fetch_array($horariosInduccionEstudiante)) {
+        $fecha = date('j/n/Y', strtotime($vRow['fecha_hora_inicio']));
+        $horaInicio = date('h:i A', strtotime($vRow['fecha_hora_inicio']));
+        $horaFin = date('h:i A', strtotime($vRow['fecha_hora_fin']));
+        $dataText .= "
                 <tr>
                     <td colspan='2' align='center'>
                         <table border='1' id='tablaHorariosEstudiantes'>
@@ -138,19 +141,19 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                     </td>            
                 </tr>
             ";
-            // si el estudiante ha obtenido baja calificación en la evaluación de inducción
-            $consultaAsistencia = $consulta->consultaInduccionEstudiante($row['estudiante_id'], $row['periodo_academico_id'], 2);
-            if($rowCA = mysql_fetch_array($consultaAsistencia) && mysql_num_rows($horariosInduccionEstudiante) <= 1) {
-                $muestraHorarios = true;
-                $induccion = validaTipoInduccion(2);
-            }
+        // si el estudiante ha obtenido baja calificación en la evaluación de inducción
+        $consultaAsistencia = $consulta->consultaInduccionEstudiante($row['estudiante_id'], $row['periodo_academico_id'], 2);
+        if ($rowCA = mysql_fetch_array($consultaAsistencia) && mysql_num_rows($horariosInduccionEstudiante) <= 1) {
+            $muestraHorarios = true;
+            $induccion = validaTipoInduccion(2);
         }
-        if(!isset($consultaAsistencia)) {
-            $dataText .= "
+    }
+    if (!isset($consultaAsistencia)) {
+        $dataText .= "
             <tr><td colspan='2' align='center'>No se encontraron registros</td></tr>
             ";
-            $muestraHorarios = true;
-        }
+        $muestraHorarios = true;
+    }
     $dataText .= "
                 </tbody>
             </table>
@@ -160,11 +163,11 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
     date_default_timezone_get('America/Bogota');
     $fecha = date('Y/m/d', time());
     $consultaFecha = $consulta->verificarFechasInduccion($fecha, $row['periodo_academico_id']);
-        if($muestraHorarios && $consultaFecha = mysql_fetch_array($consultaFecha)) {
-            $dataText .= "
+    if ($muestraHorarios && $consultaFecha = mysql_fetch_array($consultaFecha) && ($row['tipo_estudiante'] === $tipoEstudiante || $row['programa_id'] === $programa)) {
+        $dataText .= "
                 <div id='HorariosInduccion'>
                     <div align='center' style='background-color: #004669'>
-                        <h2 id='p_fieldset_autenticacion_2'>Horarios de Inducción".$induccion['titulo']."</h2>
+                        <h2 id='p_fieldset_autenticacion_2'>Horarios de Inducción" . $induccion['titulo'] . "</h2>
                     </div>
                     <table border='1'>
                         <thead>
@@ -180,14 +183,14 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                         </thead>
                         <tbody> 
                         ";
-            $induccionVr = join(', ',$induccion['valor']);
-            $consultaHorarios = $consulta->HorariosInduccionesAgendamiento($row['periodo_academico_id'], $row['zona_id'], $row['cead_id'], $row['escuela'], $induccionVr);
-            if(mysql_num_rows($consultaHorarios)) {
-                while ($horarios = mysql_fetch_array($consultaHorarios)) {
-                    $fecha = date('j/n/Y', strtotime($horarios['fecha_hora_inicio']));
-                    $horaInicio = date('h:i A', strtotime($horarios['fecha_hora_inicio']));
-                    $horaFin = date('h:i A', strtotime($horarios['fecha_hora_fin']));
-                    $dataText .= "
+        $induccionVr = join(', ', $induccion['valor']);
+        $consultaHorarios = $consulta->HorariosInduccionesAgendamiento($row['periodo_academico_id'], $row['zona_id'], $row['cead_id'], $row['escuela'], $induccionVr);
+        if (mysql_num_rows($consultaHorarios)) {
+            while ($horarios = mysql_fetch_array($consultaHorarios)) {
+                $fecha = date('j/n/Y', strtotime($horarios['fecha_hora_inicio']));
+                $horaInicio = date('h:i A', strtotime($horarios['fecha_hora_inicio']));
+                $horaFin = date('h:i A', strtotime($horarios['fecha_hora_fin']));
+                $dataText .= "
                             <tr align='center'>
                                 <td>$horarios[salon]</td>
                                 <td>$fecha</td>
@@ -198,27 +201,45 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
                                 <td><input type='radio' id='horario' name='horario' value='$horarios[induccion_horario_id]' required></td>
                             </tr>
                         ";
-                }
-                $dataText .= "
-                <tr><td colspan='12' align='center'><input type='button' class='botones' name='selecciona_horario' id='selecciona_horario' value='Registrar' onclick='HorarioCRUD(1);' /></td></tr>
-                ";
-            } else {
-                $dataText .= "<tr><td colspan='12' align='center'>No hay horarios de inducción disponibles</td></tr>";
             }
             $dataText .= "
+                <tr><td colspan='12' align='center'><input type='button' class='botones' name='selecciona_horario' id='selecciona_horario' value='Registrar' onclick='HorarioCRUD(1);' /></td></tr>
+                ";
+        } else {
+            $dataText .= "<tr><td colspan='12' align='center'>No hay horarios de inducción disponibles</td></tr>";
+        }
+        $dataText .= "
                         </tbody>      
                     </table>
                 </div>
                 ";
+        $additional = array(
+            'type' => 'alert success',
+            'bold' => 'Validación: ',
+            'text' => '<span>Nuevo Estudiante</span>'
+        );
+    } else {
+        if (!$muestraHorarios && $consultaFecha) {
+            $consultaCentro = $consulta->consultaCentro($row['cead_id']);
+            if ($centro = mysql_fetch_array($consultaCentro))
+                $additional = array(
+                    'type' => 'alert info',
+                    'bold' => 'Nota: ',
+                    'text' => '<span>en caso de NO asistir en la fecha programada por favor comuníquese con su centro para reprogramar</span><br>
+                        <strong>Dirección: </strong>' . $centro['direccion'] . '<br><strong>Teléfono: </strong>' . $centro['telefono']
+                );
+        } else {
+            $additional = array(
+                'type' => 'alert warning',
+                'bold' => 'Validación: ',
+                'text' => '<span>Estudiante Antiguo</span>'
+            );
         }
+    }
     $dataText .= "
                     <input type='hidden' name='crud' id='crud' >
                 </form>
                 ";
-
-        $consultaCentro = $consulta->consultaCentro($row['cead_id']);
-        if($centro = mysql_fetch_array($consultaCentro))
-            $additional = '<br><strong>Dirección: </strong>'.$centro['direccion'].'<br><strong>Teléfono: </strong>'.$centro['telefono'];
 
     echo json_encode(array(
         'title' => 'Resultado de la consulta',
@@ -233,6 +254,10 @@ if ($row = mysql_fetch_array($verificaMatriculado)) {
         'text' => 'No se encontró información de inducción del estudiante',
         'type' => 'error',
         'value' => '',
-        'additional' => ''
+        'additional' => array(
+            'type' => 'alert',
+            'bold' => 'Error: ',
+            'text' => '<span>Verifique el documento o comuníquese con su centro</span>'
+        )
     ));
 }
