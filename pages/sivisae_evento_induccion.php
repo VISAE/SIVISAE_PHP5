@@ -542,7 +542,9 @@ $_SESSION["modulo"] = $_GET["op"];
                         </div>
                     </div>
                     <div id="carg" align="center"></div>
-                    <div align="center" id="result"></div>
+                    <div align="center" id="result">
+                        <div style="height: 200px;"></div>
+                    </div>
                     <div align="center" id="datosEstudiante">
                         <?php
                         include "sivisae_formulario_estudiante_induccion.php";

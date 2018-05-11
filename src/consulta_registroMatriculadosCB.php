@@ -97,7 +97,7 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
             $encontrado = true;
         }
 
-        if($encontrado) {
+        if ($encontrado) {
             $asisteInduccionEstudiante = $consulta->consultaInduccionEstudiante($row['estudiante_id'], $row['periodo_academico_id']);
             if ($rowIE = mysql_fetch_array($asisteInduccionEstudiante))
                 $salida = Array('typeSwal' => 'info',
@@ -105,7 +105,7 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
                     'response' => $dataText);
             else {
                 $registrarAsistencia = $consulta->registrarAsistenciaEventoInduccion($row['estudiante_id'], 1, $row['periodo_academico_id']);
-                if($registrarAsistencia)
+                if ($registrarAsistencia)
                     $salida = Array('typeSwal' => 'success',
                         'titleSwal' => 'El estudiante ' . $row['nombre'] . ' ha ingresado exitosamente',
                         'response' => $dataText,
@@ -134,14 +134,18 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
     } else {
         $salida = Array('typeSwal' => 'error',
             'titleSwal' => 'Verifique el periodo académico',
-            'response' => "");
+            'response' => "<div style='height: 200px;'></div>");
         date_default_timezone_get('America/Bogota');
         $fecha = date('Y/m/d', time());
         $consultaFecha = $consulta->verificarFechasInduccion($fecha, $periodo);
         if ($rowF = mysql_fetch_array($consultaFecha)) {
             $datosEstudiante = $consulta->consultaEstudiante($documento);
-            if($row = mysql_fetch_array($datosEstudiante)) {
+            if ($row = mysql_fetch_array($datosEstudiante)) {
                 $salida = Array('typeSwal' => 'warning',
+                    'titleSwal' => 'Registro Inexistente',
+                    'textSwal' => "El estudiante\n$row[nombre]\nNo se encuentra matriculado en este periodo académico",
+                    'response' => "<div style='height: 200px;'></div>");
+            /*    $salida = Array('typeSwal' => 'warning',
                     'titleSwal' => 'Registro Inexistente',
                     'textSwal' => '¿desea proceder a crearlo?',
                     'response' => "",
@@ -152,14 +156,14 @@ if (isset($_POST['documento']) && isset($_POST['periodo'])) {
                     'titleSwal' => 'Registro Inexistente',
                     'textSwal' => '¿desea proceder a crearlo?',
                     'response' => "",
-                    'cancelBtn' => true);
+                    'cancelBtn' => true);*/
             }
         }
     }
     echo json_encode($salida);
 } else {
-    echo json_encode(Array('typeSwal'=>'warning',
-        'titleSwal'=>'Error',
-        'response'=>'Error: Verifique los campos'));
+    echo json_encode(Array('typeSwal' => 'warning',
+        'titleSwal' => 'Error',
+        'response' => "<div style='height: 200px;'></div>Error: Verifique los campos"));
 }
 ?>
