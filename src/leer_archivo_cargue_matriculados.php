@@ -92,7 +92,7 @@ if (!isset($_FILES['archivo'])) {
                                 'periodo_academico_periodo_academico_id' => $periodo,
                                 'programa_programa_id' => $idPrograma,
                                 'tipo_estudiante' => $tipoEstudiante,
-                                'numero_matriculas' => 1);
+                                'numero_matriculas' => ($tipoEstudiante == 'G'?1:$consulta->consultaCantidadMatriculas($idEstudiante, $idPrograma)+1));
                             $idMatricula = $consulta->agregaMatricula($datosMatricula);
                             $counter += 1;
                         }

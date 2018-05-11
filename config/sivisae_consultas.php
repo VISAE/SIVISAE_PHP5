@@ -5209,6 +5209,15 @@ class sivisae_consultas extends Bd {
         return $result;
     }
 
+    function  consultaCantidadMatriculas($idEstudiante, $programa) {
+        $sql = "SELECT MAX(`numero_matriculas`) AS matriculas
+                FROM `SIVISAE`.`matricula`
+                WHERE `estudiante_estudiante_id` = $idEstudiante 
+                AND `programa_programa_id` = $programa ";
+        $result = mysql_query($sql);
+        return mysql_fetch_assoc($result)['matriculas'];
+    }
+
     function consultaEstudiante($documento) {
         $sql = "SELECT 
                 e.`estudiante_id`, e.`nombre`, e.`correo`, e.`telefono`, e.`genero`, e.`cead_cead_id` AS cead, c.`zona_zona_id` AS zona
@@ -5272,13 +5281,15 @@ class sivisae_consultas extends Bd {
         return $resultado;
     }
 
-    function consultaMatricula($estudiante, $periodo, $programa) {
+    function consultaMatricula($estudiante, $periodo = null, $programa = null) {
         $sql = "SELECT
                 m.`matricula_id`
                 FROM `sivisae`.`matricula` m
-                WHERE m.`estudiante_estudiante_id` = '".$estudiante."'
-                AND m.`periodo_academico_periodo_academico_id` = '".$periodo."'
-                AND m.`programa_programa_id` = '".$programa."'";
+                WHERE m.`estudiante_estudiante_id` = '".$estudiante."' ";
+        if($periodo)
+            $sql .= " AND m.`periodo_academico_periodo_academico_id` = '".$periodo."' ";
+        if($programa)
+            $sql .= " AND m.`programa_programa_id` = '".$programa."' ";
         $resultado = mysql_query($sql);
         return $resultado;
     }
