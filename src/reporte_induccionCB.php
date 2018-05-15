@@ -15,7 +15,6 @@ $escuela = isset($_POST['escuela']) && $_POST['escuela'] != '' ? implode("', '",
 $programa = isset($_POST['programa']) && $_POST['programa'] != '' ? implode(", ", $_POST['programa']) : "T";
 //$pagina = $_POST["page"];
 $auditor = isset($_POST['auditor']) && $_POST['auditor'] != '' ? $_POST['auditor'] : 'T';
-$induccion = $_POST['induccion'];
 $asistencia = $_POST['asistencia'];
 
 $registros;
@@ -42,9 +41,9 @@ $item_per_page = $registros;
 //Obtiene la cantidad total de registros desde BD para crear la paginacion
 $cantAud;
 if (isset($_POST["buscar"]) && $_POST["buscar"] != '') {
-    $cantAud = $consulta->cantReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $induccion, $asistencia);
+    $cantAud = $consulta->cantReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $asistencia);
 } else {
-    $cantAud = $consulta->cantReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $induccion, $asistencia);
+    $cantAud = $consulta->cantReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $asistencia);
 }
 $get_total_rows = $cantAud;
 
@@ -56,9 +55,9 @@ $page_position = (($page_number - 1) * $item_per_page);
 
 
 if (isset($_POST["buscar"]) && $_POST["buscar"] != '') {
-    $inducciones = $consulta->ReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $induccion, $asistencia);
+    $inducciones = $consulta->ReporteInducciones($_POST["buscar"], $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $asistencia);
 } else {
-    $inducciones = $consulta->ReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $induccion, $asistencia);
+    $inducciones = $consulta->ReporteInducciones('n', $periodo, $zona, $cead, $escuela, $programa, $page_position, $item_per_page, $asistencia);
 }
 
 if (count($inducciones) <= 0) {

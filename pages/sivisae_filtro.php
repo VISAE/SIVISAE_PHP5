@@ -262,12 +262,6 @@ $programa = $consulta->filtro_programas($filtro_escuelas, $_SESSION["programa_us
 
                             case 10: // Reporte inducción asisten / no asisten
                                 ?>
-                                <td style="padding: 0px 20px;"><label for="induccion">Tipo de Inducción</label><br>
-                                    <select id="induccion" name="induccion" data-placeholder="Seleccione un tipo de inducción" class="chosen-select-deselect">
-                                        <option value='1' selected>Inducción General</option>
-                                        <option value='2'>Inmersión a Campus</option>
-                                    </select>
-                                </td>
                                 <td>
                                     <input type="radio" id="asistencia" name="asistencia" value="1" checked>Asistieron<br>
                                     <input type="radio" id="asistencia" name="asistencia" value="0">No Asistieron
@@ -279,8 +273,7 @@ $programa = $consulta->filtro_programas($filtro_escuelas, $_SESSION["programa_us
                                 break;
                         }
                         ?>
-
-
+                    </tr>
                 </table>
             </div>
         </td>

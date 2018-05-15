@@ -139,7 +139,6 @@ $consulta = new sivisae_consultas();
                         var periodo = $("#periodo").val();
                         var escuela = $("#escuela").val();
                         var programa = $("#programa").val();
-                        var induccion = $("#induccion").val();
                         var asistencia = $("input[name=asistencia]:checked").val();
 
                         $("#list_estudiantes").on("click", ".pagination a", function (e) {
@@ -154,7 +153,6 @@ $consulta = new sivisae_consultas();
                                 "periodo": periodo,
                                 "escuela": escuela,
                                 "programa": programa,
-                                "induccion": induccion,
                                 "asistencia": asistencia
                             },
                             function () { //get content from PHP page 
